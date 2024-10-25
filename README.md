@@ -10,17 +10,20 @@ Node 20 or greater.
 ## Usage
 
 ```
+mkdir your-app-name
 cd your-app-name
-yarn
+npx degit criesbeck/react-vitest
+npm install
 ```
-just control-C to exit then run ``yarn``.
+If the third step hangs after printing ``> cloned criesbeck/react-vitest#HEAD``, 
+just control-C to exit then run ``npm install``.
 
 ## Test
 
 Verify that the initial app works. Run
 
 ```
-yarn start
+npm start
 ```
 
 and open the URL displayed.
@@ -28,7 +31,7 @@ and open the URL displayed.
 Verify that the unit tests work with
 
 ```
-yarn test
+npm test
 ```
 
 Two tests should run and pass. 
@@ -39,12 +42,12 @@ Two tests should run and pass.
 
 | Script           | Description                                         |
 | -----------------| --------------------------------------------------- |
-| yarn start        | Runs the app in the development mode.               |
-| yarn run dev      | Runs the app in the development mode.               |
-| yarn run build    | Builds the app for production to the `dist` folder. |
-| yarn run serve    | Serves the production build from the `dist` folder. |
-| yarn test         | Starts a Jest-like test loop                        |
-| yarn run coverage | Runs the tests, displays code coverage results      |
+| npm start        | Runs the app in the development mode.               |
+| npm run dev      | Runs the app in the development mode.               |
+| npm run build    | Builds the app for production to the `dist` folder. |
+| npm run serve    | Serves the production build from the `dist` folder. |
+| npm test         | Starts a Jest-like test loop                        |
+| npm run coverage | Runs the tests, displays code coverage results      |
 
 
 ## Git
