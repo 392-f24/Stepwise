@@ -2,7 +2,6 @@
 import reactPlugin from 'eslint-plugin-react';
 import prettierPlugin from 'eslint-plugin-prettier';
 import babelParser from '@babel/eslint-parser';
-import importPlugin from 'eslint-plugin-import';
 
 export default [
   {
@@ -30,30 +29,10 @@ export default [
     plugins: {
       react: reactPlugin,
       prettier: prettierPlugin,
-      import: importPlugin,
     },
     rules: {
       "prettier/prettier": "error",
       "react/react-in-jsx-scope": "off",
-      "import/order": [
-        "error",
-        {
-          "groups": [["builtin", "external", "internal"]],
-          "pathGroups": [
-            {
-              "pattern": "react",
-              "group": "builtin",
-              "position": "before"
-            }
-          ],
-          "pathGroupsExcludedImportTypes": ["react"],
-          "newlines-between": "always",
-          "alphabetize": {
-            "order": "asc",
-            "caseInsensitive": true
-          }
-        }
-      ],
       "max-len": [
         "error",
         {
