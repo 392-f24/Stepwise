@@ -7,6 +7,8 @@
       "@utils/*": ["src/utils/*"],
       "@styles/*": ["src/styles/*"],
       "@context/*": ["src/context/*"],
+      "@pages/*": ["src/pages/*"],
+      "@firebase/*": ["src/utils/firebase/*"],
     }
   }
 }

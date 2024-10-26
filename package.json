@@ -27,6 +27,7 @@
     "@fontsource/roboto": "^5.1.0",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
+    "firebase": "^11.0.1",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-router-dom": "^6.27.0"
