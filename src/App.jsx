@@ -10,6 +10,7 @@ import { theme } from '@utils/theme';
 
 import Home from './pages/Home';
 
+import Header from '@components/common/Header';
 import './App.css';
 
 const App = () => {
@@ -22,8 +23,24 @@ const App = () => {
           <div className="content">
             {/* Main content area where pages will render */}
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/streak" element={<Streak />} />
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Header />
+                    <Home />
+                  </>
+                }
+              />
+              <Route
+                path="/streak"
+                element={
+                  <>
+                    <Header />
+                    <Streak />
+                  </>
+                }
+              />
             </Routes>
           </div>
 
