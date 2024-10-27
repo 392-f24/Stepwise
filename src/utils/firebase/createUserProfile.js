@@ -1,5 +1,5 @@
 import { db } from '@utils/firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 // Unified function to fetch and listen to user profile changes by UID
 // (supports both regular and transaction-based fetches)
@@ -39,14 +39,12 @@ export const createFirstUserProfile = async (user) => {
             {
               name: '',
               progress: 0,
-              tasks: [
-                { name: '', completed: false }
-              ]
+              tasks: [{ name: '', completed: false }],
             },
-          ]
-        }
+          ],
+        },
       ],
-      streak: []
+      streak: [],
     };
 
     // If the profile does not exist, create it with the default data
