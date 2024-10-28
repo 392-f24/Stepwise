@@ -1,7 +1,6 @@
-import { Box, Typography, Grid } from '@mui/material';
 import FireIcon from '@mui/icons-material/Whatshot';
-import "@styles/StreakPage.css";
-import { useTheme } from '@mui/material/styles';
+import { Box, Grid, Typography } from '@mui/material';
+import '@styles/StreakPage.css';
 
 // Days of the week headers
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -34,8 +33,8 @@ const Streak = () => {
     <Box sx={{ textAlign: 'center', mt: 4 }}>
       <FireIcon
         sx={{
-          fontSize: 120,
-          color: "primary.dark",
+          fontSize: 80,
+          color: 'primary.dark',
           animation: 'burn-animation 1s infinite',
         }}
       />
@@ -47,10 +46,8 @@ const Streak = () => {
         October 2024
       </Typography>
 
-
-
       {/* Days of the Week Headers */}
-      <Grid container spacing={1} sx={{ maxWidth: 500, margin: 'auto' }}>
+      <Grid container spacing={1} sx={{ margin: 'auto' }}>
         {daysOfWeek.map((day) => (
           <Grid item xs={12 / 7} key={day}>
             <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
@@ -61,7 +58,7 @@ const Streak = () => {
       </Grid>
 
       {/* Calendar Grid */}
-      <Grid container spacing={1} sx={{ maxWidth: 500, margin: 'auto' }}>
+      <Grid container spacing={1} sx={{ margin: 'auto' }}>
         {daysInCalendar.map((dayObj, index) => (
           <Grid item xs={12 / 7} key={index}>
             <Box
@@ -77,7 +74,7 @@ const Streak = () => {
                   <Typography variant="caption">{dayObj.day}</Typography>
                   <FireIcon
                     sx={{
-                      color: dayObj.completed ? "primary.main" : 'gray',
+                      color: dayObj.completed ? 'primary.main' : 'gray',
                       fontSize: 28,
                       animation: dayObj.completed ? 'burn-animation 3s infinite' : 'none',
                     }}
