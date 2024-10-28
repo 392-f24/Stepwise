@@ -11,7 +11,7 @@ const useGoalsManager = () => {
     try {
       const newGoal = {
         name: goalName,
-        progress: 0,
+        expanded: false,
         microgoals: [],
       };
 
@@ -38,7 +38,7 @@ const useGoalsManager = () => {
       // Define the new microgoal structure
       const newMicrogoal = {
         name: microgoalName,
-        progress: 0,
+        expanded: false,
         tasks: [],
       };
 
