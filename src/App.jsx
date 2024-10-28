@@ -21,26 +21,11 @@ const App = () => {
       <div className="App">
         <Router>
           <div className="content">
+            <Header />
             {/* Main content area where pages will render */}
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <Header />
-                    <Home />
-                  </>
-                }
-              />
-              <Route
-                path="/streak"
-                element={
-                  <>
-                    <Header />
-                    <Streak />
-                  </>
-                }
-              />
+              <Route path="/" element={<Home />} />
+              <Route path="/streak" element={<Streak />} />
             </Routes>
           </div>
 
