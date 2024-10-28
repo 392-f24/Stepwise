@@ -6,9 +6,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@utils/*": ["src/utils/*"],
       "@styles/*": ["src/styles/*"],
-      "@context/*": ["src/context/*"],
+      "@contexts/*": ["src/contexts/*"],
       "@pages/*": ["src/pages/*"],
-      "@firebase/*": ["src/utils/firebase/*"],
     }
   }
 }
