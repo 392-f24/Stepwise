@@ -1,3 +1,5 @@
+import { useUser } from '@contexts/UserContext';
+import { fetchUserGoals } from '@hooks/fetchGoals';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -12,7 +14,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
   <Box sx={{ position: 'relative', display: 'inline-flex', mr: 2 }}>
@@ -39,11 +41,11 @@ const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
 const Task = ({ task, onToggle }) => (
   <ListItem dense>
     <Checkbox edge="start" checked={task.completed} onChange={onToggle} />
-    <ListItemText primary={task.title} />
+    <ListItemText primary={task.name} />
   </ListItem>
 );
 
-const MicroGoal = ({ microGoal, onToggleTask, onToggleExpand }) => {
+const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex, onToggleTask, onToggleExpand }) => {
   const progress =
     (microGoal.tasks.filter((t) => t.completed).length / microGoal.tasks.length) * 100;
 
@@ -51,15 +53,23 @@ const MicroGoal = ({ microGoal, onToggleTask, onToggleExpand }) => {
     <Paper elevation={2} sx={{ p: 2, mb: 2, bgcolor: 'background.default' }}>
       <Box display="flex" alignItems="center">
         <ProgressIndicator value={progress} size={32} thickness={3} />
-        <Typography variant="subtitle1">{microGoal.title}</Typography>
-        <IconButton onClick={() => onToggleExpand(microGoal.id)} size="small" sx={{ ml: 'auto' }}>
+        <Typography variant="subtitle1">{microGoal.name}</Typography>
+        <IconButton
+          onClick={() => onToggleExpand(macroGoalIndex, microGoalIndex)}
+          size="small"
+          sx={{ ml: 'auto' }}
+        >
           {microGoal.expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
       {microGoal.expanded && (
         <List sx={{ mt: 1, pl: 4 }}>
-          {microGoal.tasks.map((task) => (
-            <Task key={task.id} task={task} onToggle={() => onToggleTask(microGoal.id, task.id)} />
+          {microGoal.tasks.map((task, taskIndex) => (
+            <Task
+              key={`${macroGoalIndex}-${microGoalIndex}-${taskIndex}`} // Unique key for tasks
+              task={task}
+              onToggle={() => onToggleTask(macroGoalIndex, microGoalIndex, taskIndex)}
+            />
           ))}
         </List>
       )}
@@ -67,10 +77,10 @@ const MicroGoal = ({ microGoal, onToggleTask, onToggleExpand }) => {
   );
 };
 
-const MacroGoal = ({ macroGoal, onToggleTask, onToggleExpand }) => {
+const MacroGoal = ({ macroGoal, macroGoalIndex, onToggleTask, onToggleExpand }) => {
   const progress =
-    (macroGoal.microGoals.reduce((acc, mg) => acc + mg.tasks.filter((t) => t.completed).length, 0) /
-      macroGoal.microGoals.reduce((acc, mg) => acc + mg.tasks.length, 0)) *
+    (macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.filter((t) => t.completed).length, 0) /
+      macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.length, 0)) *
     100;
 
   return (
@@ -78,23 +88,23 @@ const MacroGoal = ({ macroGoal, onToggleTask, onToggleExpand }) => {
       <Box display="flex" alignItems="center" mb={2}>
         <ProgressIndicator value={progress} size={48} thickness={4} />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          {macroGoal.title}
+          {macroGoal.name}
         </Typography>
-        <IconButton onClick={() => onToggleExpand(macroGoal.id)} size="small" sx={{ ml: 'auto' }}>
+        <IconButton onClick={() => onToggleExpand(macroGoalIndex)} size="small" sx={{ ml: 'auto' }}>
           {macroGoal.expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
       <Divider sx={{ mb: 2 }} />
       {macroGoal.expanded && (
         <List sx={{ pl: 2 }}>
-          {macroGoal.microGoals.map((microGoal) => (
+          {macroGoal.microgoals.map((microGoal, microGoalIndex) => (
             <MicroGoal
-              key={microGoal.id}
+              key={`${macroGoalIndex}-${microGoalIndex}`} // Unique key for microgoals
               microGoal={microGoal}
-              onToggleTask={(microGoalId, taskId) =>
-                onToggleTask(macroGoal.id, microGoalId, taskId)
-              }
-              onToggleExpand={(microGoalId) => onToggleExpand(macroGoal.id, microGoalId)}
+              macroGoalIndex={macroGoalIndex}
+              microGoalIndex={microGoalIndex} // Pass the micro goal index
+              onToggleTask={onToggleTask}
+              onToggleExpand={onToggleExpand}
             />
           ))}
         </List>
@@ -104,71 +114,39 @@ const MacroGoal = ({ macroGoal, onToggleTask, onToggleExpand }) => {
 };
 
 export default function GoalTracker() {
-  const [goals, setGoals] = useState([
-    {
-      id: '1',
-      title: 'Improve Coding Skills',
-      expanded: true,
-      microGoals: [
-        {
-          id: '1-1',
-          title: 'Learn React',
-          expanded: true,
-          tasks: [
-            { id: '1-1-1', title: 'Complete React tutorial', completed: true },
-            { id: '1-1-2', title: 'Build a small project', completed: false },
-          ],
-        },
-        {
-          id: '1-2',
-          title: 'Master JavaScript',
-          expanded: false,
-          tasks: [
-            { id: '1-2-1', title: 'Study ES6+ features', completed: false },
-            { id: '1-2-2', title: 'Practice coding challenges', completed: false },
-          ],
-        },
-      ],
-    },
-    {
-      id: '2',
-      title: 'Get Fit',
-      expanded: false,
-      microGoals: [
-        {
-          id: '2-1',
-          title: 'Cardio',
-          expanded: false,
-          tasks: [
-            { id: '2-1-1', title: 'Run 5k', completed: false },
-            { id: '2-1-2', title: 'Swim 1k', completed: false },
-          ],
-        },
-        {
-          id: '2-2',
-          title: 'Strength Training',
-          expanded: false,
-          tasks: [
-            { id: '2-2-1', title: 'Bench press 100lbs', completed: false },
-            { id: '2-2-2', title: 'Squat 150lbs', completed: false },
-          ],
-        },
-      ],
-    },
-  ]);
+  const { user } = useUser();
+  const [goals, setGoals] = useState([]); // Start with an empty array
+  const [loading, setLoading] = useState(true);
 
-  const handleToggleTask = (macroGoalId, microGoalId, taskId) => {
+  // Fetch goals from Firestore
+  useEffect(() => {
+    const loadGoals = async () => {
+      if (!user) return;
+      setLoading(true);
+      try {
+        const userGoals = await fetchUserGoals(user.uid);
+        setGoals(userGoals); // Update goals with fetched data
+      } catch (error) {
+        console.error('Failed to load goals:', error);
+      }
+      setLoading(false);
+    };
+
+    loadGoals();
+  }, [user]);
+
+  const handleToggleTask = (macroGoalIndex, microGoalIndex, taskIndex) => {
     setGoals((prevGoals) =>
-      prevGoals.map((macroGoal) =>
-        macroGoal.id === macroGoalId
+      prevGoals.map((macroGoal, mgi) =>
+        mgi === macroGoalIndex
           ? {
               ...macroGoal,
-              microGoals: macroGoal.microGoals.map((microGoal) =>
-                microGoal.id === microGoalId
+              microgoals: macroGoal.microgoals.map((microGoal, mgi) =>
+                mgi === microGoalIndex
                   ? {
                       ...microGoal,
-                      tasks: microGoal.tasks.map((task) =>
-                        task.id === taskId ? { ...task, completed: !task.completed } : task,
+                      tasks: microGoal.tasks.map((task, ti) =>
+                        ti === taskIndex ? { ...task, completed: !task.completed } : task,
                       ),
                     }
                   : microGoal,
@@ -179,15 +157,15 @@ export default function GoalTracker() {
     );
   };
 
-  const handleToggleExpand = (macroGoalId, microGoalId) => {
+  const handleToggleExpand = (macroGoalIndex, microGoalIndex) => {
     setGoals((prevGoals) =>
-      prevGoals.map((macroGoal) =>
-        macroGoal.id === macroGoalId
-          ? microGoalId
+      prevGoals.map((macroGoal, mgi) =>
+        mgi === macroGoalIndex
+          ? microGoalIndex !== undefined
             ? {
                 ...macroGoal,
-                microGoals: macroGoal.microGoals.map((microGoal) =>
-                  microGoal.id === microGoalId
+                microgoals: macroGoal.microgoals.map((microGoal, mgi) =>
+                  mgi === microGoalIndex
                     ? { ...microGoal, expanded: !microGoal.expanded }
                     : microGoal,
                 ),
@@ -200,14 +178,19 @@ export default function GoalTracker() {
 
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', pt: 4 }}>
-      {goals.map((macroGoal) => (
-        <MacroGoal
-          key={macroGoal.id}
-          macroGoal={macroGoal}
-          onToggleTask={handleToggleTask}
-          onToggleExpand={handleToggleExpand}
-        />
-      ))}
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        goals.map((macroGoal, macroGoalIndex) => (
+          <MacroGoal
+            key={macroGoalIndex} // Use the index as the key
+            macroGoal={macroGoal}
+            macroGoalIndex={macroGoalIndex} // Pass the index
+            onToggleTask={handleToggleTask}
+            onToggleExpand={handleToggleExpand}
+          />
+        ))
+      )}
     </Box>
   );
 }
