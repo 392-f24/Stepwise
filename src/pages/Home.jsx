@@ -72,11 +72,7 @@ const Home = () => {
 
   return (
     <Box sx={{ width: '90%', margin: 'auto' }}>
-      <GoalTracker
-        macroGoals={goals}
-        onToggleTask={handleToggleTask}
-        onToggleExpand={handleToggleExpand}
-      />
+      <GoalTracker />
     </Box>
   );
 };
