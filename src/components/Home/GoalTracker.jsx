@@ -1,5 +1,4 @@
 import { useUser } from '@contexts/UserContext';
-import { fetchUserGoals } from '@hooks/fetchGoals';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -14,7 +13,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
   <Box sx={{ position: 'relative', display: 'inline-flex', mr: 2 }}>
@@ -114,26 +113,8 @@ const MacroGoal = ({ macroGoal, macroGoalIndex, onToggleTask, onToggleExpand }) 
 };
 
 export default function GoalTracker() {
-  const { user } = useUser();
-  const [goals, setGoals] = useState([]); // Start with an empty array
-  const [loading, setLoading] = useState(true);
-
-  // Fetch goals from Firestore
-  useEffect(() => {
-    const loadGoals = async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const userGoals = await fetchUserGoals(user.uid);
-        setGoals(userGoals); // Update goals with fetched data
-      } catch (error) {
-        console.error('Failed to load goals:', error);
-      }
-      setLoading(false);
-    };
-
-    loadGoals();
-  }, [user]);
+  const { user, loading } = useUser();
+  const [goals, setGoals] = useState(user.goals || []);
 
   const handleToggleTask = (macroGoalIndex, microGoalIndex, taskIndex) => {
     setGoals((prevGoals) =>
