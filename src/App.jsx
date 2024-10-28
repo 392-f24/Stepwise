@@ -17,8 +17,8 @@ const App = () => {
       <UserProvider>
         <div className="App">
           <Router>
+            <Header />
             <div className="content">
-              <Header />
               {/* Main content area where pages will render */}
               <Routes>
                 <Route path="/" element={<Home />} />
