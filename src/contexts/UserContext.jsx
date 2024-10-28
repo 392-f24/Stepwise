@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from '@mui/material';
+import LoadingCircle from '@components/common/LoadingCircle';
 import { signInWithGoogle } from '@utils/firebase/authUtils';
 import { fetchUserProfile, updateUserProfile } from '@utils/firebase/createUserProfile';
 import { auth } from '@utils/firebaseConfig';
@@ -75,13 +75,7 @@ export const UserProvider = ({ children }) => {
         updateProfile,
       }}
     >
-      {!loading ? (
-        children
-      ) : (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-          <CircularProgress />
-        </Box>
-      )}
+      {!loading ? children : <LoadingCircle />}
     </UserContext.Provider>
   );
 };
