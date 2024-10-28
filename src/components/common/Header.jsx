@@ -1,23 +1,12 @@
+import { useUser } from '@contexts/UserContext';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { handleSignIn, handleSignOut } from '@utils/auth';
-import { auth } from '@utils/firebaseConfig';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { user, handleSignIn, handleSignOut } = useUser();
 
   const handleAuthClick = async () => {
     if (user) {
-      await handleSignOut(navigate);
+      await handleSignOut();
     } else {
       await handleSignIn();
     }

@@ -1,77 +1,85 @@
 import { db } from '@utils/firebaseConfig';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
-// Unified function to fetch and listen to user profile changes by UID
-// (supports both regular and transaction-based fetches)
-export const fetchUserProfile = async (uid, transaction = null) => {
+/**
+ * Fetches the user profile data from Firestore by UID.
+ * @param {string} uid - User's UID.
+ * @returns {object|null} - The user profile data or null if not found.
+ */
+export const fetchUserProfile = async (uid) => {
   try {
     const userRef = doc(db, 'users', uid);
-
-    // If transaction is provided, use it to fetch the document
-    const userSnapshot = transaction ? await transaction.get(userRef) : await getDoc(userRef);
+    const userSnapshot = await getDoc(userRef);
 
     if (!userSnapshot.exists()) {
       console.error(`User profile for ${uid} does not exist`);
-      return { ref: userRef, profile: null }; // Return consistent format with null profile
+      return null;
     }
 
-    const profile = userSnapshot.data();
-    return { ref: userRef, profile };
+    return userSnapshot.data();
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    return { ref: null, profile: null };
+    return null;
   }
 };
 
-// Check or create user profile in Firestore (uses fetchUserProfile to streamline code)
+/**
+ * Creates a user profile in Firestore with default data if it doesn't exist.
+ * @param {object} user - The authenticated user object.
+ * @returns {boolean} - Returns true if the profile is created or exists, false otherwise.
+ */
 export const createFirstUserProfile = async (user) => {
-  try {
-    const { uid, photoURL, displayName } = user;
-    const defaultProfile = {
-      uid,
-      profilePic: photoURL || '',
-      name: displayName || '',
-      goals: [
-        {
-          name: '',
-          progress: 0,
-          microgoals: [
-            {
-              name: '',
-              progress: 0,
-              tasks: [{ name: '', completed: false }],
-            },
-          ],
-        },
-      ],
-      streak: [],
-    };
+  const { uid, photoURL, displayName } = user;
+  const defaultProfile = {
+    uid,
+    profilePic: photoURL || '',
+    name: displayName || '',
+    goals: [],
+    streak: [],
+  };
 
-    // If the profile does not exist, create it with the default data
-    await setDoc(doc(db, 'users', uid), defaultProfile);
-    console.warn('New user profile created with default data.');
+  try {
+    // Use a transaction to ensure atomic check-and-create behavior
+    const userRef = doc(db, 'users', uid);
+    const userSnapshot = await getDoc(userRef);
+
+    if (!userSnapshot.exists()) {
+      await setDoc(userRef, defaultProfile);
+      console.warn('New user profile created with default data.');
+    } else {
+      console.info('User profile already exists.');
+    }
 
     return true;
   } catch (error) {
-    console.error('Error checking or creating user profile:', error);
-    return false; // Return false if an error occurs
+    console.error('Error creating or checking user profile:', error);
+    return false;
   }
 };
 
-// Get user profile by UID
-// (simple wrapper around fetchUserProfile for non-transaction use)
+/**
+ * Retrieves the user profile from Firestore by UID.
+ * @param {string} uid - User's UID.
+ * @returns {object|null} - The user profile data or null if not found.
+ */
 export const getUserProfile = async (uid) => {
-  const fetchedUser = await fetchUserProfile(uid);
-  return fetchedUser ? fetchedUser.profile : null; // Return only the profile data
+  return await fetchUserProfile(uid);
 };
 
-// Update user profile by UID
+/**
+ * Updates the user profile data in Firestore by UID.
+ * @param {string} uid - User's UID.
+ * @param {object} updates - The fields to update in the user profile.
+ * @returns {boolean} - Returns true if the update is successful, false otherwise.
+ */
 export const updateUserProfile = async (uid, updates) => {
   try {
     const userDocRef = doc(db, 'users', uid);
     await updateDoc(userDocRef, updates);
-    console.warn('User profile updated');
+    console.info('User profile updated successfully.');
+    return true;
   } catch (error) {
     console.error('Error updating user profile:', error);
+    return false;
   }
 };
