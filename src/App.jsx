@@ -11,6 +11,7 @@ import { theme } from '@utils/theme';
 import Home from './pages/Home';
 
 import Header from '@components/common/Header';
+import { UserProvider } from '@contexts/UserContext';
 import './App.css';
 
 const App = () => {
@@ -18,36 +19,38 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="App">
-        <Router>
-          <div className="content">
-            <Header />
-            {/* Main content area where pages will render */}
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/streak" element={<Streak />} />
-            </Routes>
-          </div>
+      <UserProvider>
+        <div className="App">
+          <Router>
+            <div className="content">
+              <Header />
+              {/* Main content area where pages will render */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/streak" element={<Streak />} />
+              </Routes>
+            </div>
 
-          {/* Bottom Navigation with React Router links */}
-          <BottomNavigation
-            className="bottom-nav"
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue);
-            }}
-            showLabels
-          >
-            <BottomNavigationAction label="Home" icon={<HomeIcon />} component={Link} to="/" />
-            <BottomNavigationAction
-              label="Steak"
-              icon={<FlagIcon />}
-              component={Link}
-              to="/streak"
-            />
-          </BottomNavigation>
-        </Router>
-      </div>
+            {/* Bottom Navigation with React Router links */}
+            <BottomNavigation
+              className="bottom-nav"
+              value={value}
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              showLabels
+            >
+              <BottomNavigationAction label="Home" icon={<HomeIcon />} component={Link} to="/" />
+              <BottomNavigationAction
+                label="Steak"
+                icon={<FlagIcon />}
+                component={Link}
+                to="/streak"
+              />
+            </BottomNavigation>
+          </Router>
+        </div>
+      </UserProvider>
     </ThemeProvider>
   );
 };
