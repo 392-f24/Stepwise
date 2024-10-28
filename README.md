@@ -1,92 +1,96 @@
-# React Vitest Template
+# Stepwise - Red Team
 
-A starter template for building React apps with Vite. Includes Vitest for unit testing and
-a hefty .gitignore file.
+> COMP_SCI 392 - Fall 2024 - Northwestern University
 
-# Requirements
+## Table of Contents
 
-Node 20 or greater.
+1. [File Structure and Logic](#1-file-structure-and-logic)
+2. [Context](#2-context)
+   - [What is Context?](#1-what-is-context)
+   - [Why Use Context Instead of Hooks?](#2-why-use-context-instead-of-hooks)
+   - [How to Use UserContext](#3-how-to-use-usercontext)
+     - [Accessing User Data](#accessing-user-data)
+     - [Updating User Data](#updating-user-data)
 
-## Usage
+## 1. File Structure and Logic
 
-```
-mkdir your-app-name
-cd your-app-name
-npx degit criesbeck/react-vitest
-npm install
-```
-If the third step hangs after printing ``> cloned criesbeck/react-vitest#HEAD``, 
-just control-C to exit then run ``npm install``.
-
-## Test
-
-Verify that the initial app works. Run
+This project uses a component-based structure with a focus on clear separation of concerns. Key files and folders:
 
 ```
-npm start
+.
+├── LICENSE
+├── README.md                  # Project documentation and usage guide
+├── eslint.config.mjs
+├── firebase.json              # Firebase configuration for hosting
+├── package.json               # Dependencies
+├── src                        # Source code
+│   ├── components             # Shared components and features
+│   │   └── common             # Common components used across the app
+|   |   └── Home               # Home page components
+|   |   └── Streak             # Streak page components
+│   ├── contexts               # Contexts for managing global app state
+│   │   └── UserContext.jsx    # Provides user authentication data globally
+│   ├── hooks                  # Custom hooks for specialized logic
+│   ├── pages                  # Application pages
+│   └── utils                  # Utility functions and Firebase configurations
+└── vite.config.js             # Vite configuration for project bundling (shortcuts)
 ```
 
-and open the URL displayed.
+The main components and utilities are organized under `src/components` and `src/utils`, while `UserContext` manages user state globally to avoid redundant data fetching.
 
-Verify that the unit tests work with
+## 2. Context
 
-```
-npm test
-```
+### 1. What is Context?
 
-Two tests should run and pass. 
+Context is a React feature that enables data sharing across multiple components without needing to pass props manually at every level. It's especially useful for managing global states, like user authentication data, that are needed by many components.
 
-## Scripts
+### 2. Why Use Context Instead of Hooks?
 
-**package.json** defines the following scripts:
+In our previous `StudyBuddy` project, we relied on hooks to fetch user data directly from Firebase. This led to extremely high read counts (thousands of reads per second) whenever users navigated across components, quickly exceeding Firebase’s free limits and degrading performance. By centralizing user data with `UserContext`, data is fetched only once per session and remains available globally, reducing Firebase reads and data-fetching costs.
 
-| Script           | Description                                         |
-| -----------------| --------------------------------------------------- |
-| npm start        | Runs the app in the development mode.               |
-| npm run dev      | Runs the app in the development mode.               |
-| npm run build    | Builds the app for production to the `dist` folder. |
-| npm run serve    | Serves the production build from the `dist` folder. |
-| npm test         | Starts a Jest-like test loop                        |
-| npm run coverage | Runs the tests, displays code coverage results      |
+### 3. How to Use UserContext
 
+#### Accessing User Data
 
-## Git
+1. **Enable Global UserContext**: `UserProvider` has already been implemented to wrap the main application in `App.jsx`. This enables `UserContext` throughout the app.
 
-If everything is working, set up [your local and remote repositories](https://docs.github.com/en/get-started/importing-your-projects-to-github/importing-source-code-to-github/adding-locally-hosted-code-to-github#adding-a-local-repository-to-github-using-git).
+   ```jsx
+   import { UserProvider } from '@contexts/UserContext';
 
-## Folder Structure
+   const App = () => (
+     <UserProvider>
+       {/* App Components */}
+     </UserProvider>
+   );
+   ```
 
-```
-your-app-name
-├── node_modules
-├── public
-│   ├── favicon.svg
-│   └── robots.txt
-└── src
-    ├── App.css
-    ├── App.jsx
-    ├── index.css
-    ├── index.jsx
-    └── logo.svg
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-├── vite.config.js
-```
+2. **Access User Data in Components**: Use the `useUser` hook to access user data (anything inside their profile you can all access just by e.g. `user.goals`) and authentication functions in any component:
 
-## Credits
+   ```jsx
+   import { useUser } from '@contexts/UserContext';
+   
+   const MyComponent = () => {
+     {/* You can decide what to use from `useUser` */}
+     const { user, loading, handleSignIn, handleSignOut } = useUser();
+   
+     return user ? (
+       <div>
+         <h1>Welcome, {user.displayName}</h1>
+         <button onClick={handleSignOut}>Sign Out</button>
+       </div>
+     ) : (
+       <button onClick={handleSignIn}>Sign In</button>
+     );
+   };
+   ```
 
-React-Vitest built and maintained by [Chris Riesbeck](https://github.com/criesbeck).
+#### Updating User Data
 
-Inspired by [SafdarJamal/vite-template-react](https://github.com/SafdarJamal/vite-template-react).
-Expanded to include Vitest and some sample tests.
+Use the `updateProfile` function to update user profile information:
 
-Thanks to Rich Harris for [degit](https://www.npmjs.com/package/degit).
+   ```jsx
+   const { updateProfile } = useUser();
+   updateProfile({ displayName: 'New Name' });
+   ```
 
-Gitignore file created with [the Toptal tool](https://www.toptal.com/developers/gitignore/api/react,firebase,visualstudiocode,macos,windows).
-
-
-## License
-
-This project is licensed under the terms of the [MIT license](./LICENSE).
+The `updateProfile` function accepts an object with updated user fields and syncs them with both the context and Firebase, ensuring efficient data sharing across components and reducing the need for direct database access.
