@@ -3,7 +3,8 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '@utils/theme';
 
-import Home from './pages/Home';
+import Home from '@pages/Home';
+import Streak from '@pages/Streak';
 
 import Footer from '@components/common/Footer';
 import Header from '@components/common/Header';
@@ -35,5 +36,3 @@ const App = () => {
 };
 
 export default App;
-
-const Streak = () => <h1>Streak</h1>;
