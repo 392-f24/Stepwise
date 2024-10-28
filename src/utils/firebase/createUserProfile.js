@@ -23,6 +23,20 @@ export const fetchUserProfile = async (uid, transaction = null) => {
   }
 };
 
+/* goals structure
+{
+  name: '',
+  progress: 0,
+  microgoals: [
+    {
+      name: '',
+      progress: 0,
+      tasks: [{ name: '', completed: false }],
+    },
+  ],
+}, 
+*/
+
 // Check or create user profile in Firestore (uses fetchUserProfile to streamline code)
 export const createFirstUserProfile = async (user) => {
   try {
@@ -31,19 +45,7 @@ export const createFirstUserProfile = async (user) => {
       uid,
       profilePic: photoURL || '',
       name: displayName || '',
-      goals: [
-        {
-          name: '',
-          progress: 0,
-          microgoals: [
-            {
-              name: '',
-              progress: 0,
-              tasks: [{ name: '', completed: false }],
-            },
-          ],
-        },
-      ],
+      goals: [],
       streak: [],
     };
 
