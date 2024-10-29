@@ -14,14 +14,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-const MacroGoal = ({
-  macroGoal,
-  macroGoalIndex,
-  onToggleTask,
-  onToggleExpand,
-  onAddMicroGoal,
-  onAddTask,
-}) => {
+const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
+  const { addMicrogoal, toggleGoalExpansion } = useGoalsUpdater();
   const completedTasks = macroGoal.microgoals.reduce(
     (acc, mg) => acc + mg.tasks.filter((t) => t.completed).length,
     0,
@@ -29,13 +23,11 @@ const MacroGoal = ({
   const totalTasks = macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.length, 0);
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-  const { addMicrogoal } = useGoalsUpdater();
   const [newMicroGoalName, setNewMicroGoalName] = useState('');
 
   const handleAddMicroGoal = async () => {
     if (newMicroGoalName.trim()) {
       await addMicrogoal(macroGoalIndex, newMicroGoalName);
-      onAddMicroGoal(macroGoalIndex, { name: newMicroGoalName, expanded: false, tasks: [] });
       setNewMicroGoalName('');
     }
   };
@@ -47,13 +39,17 @@ const MacroGoal = ({
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           {macroGoal.name}
         </Typography>
-        <IconButton onClick={() => onToggleExpand(macroGoalIndex)} size="small" sx={{ ml: 'auto' }}>
+        <IconButton
+          onClick={() => toggleGoalExpansion(macroGoalIndex)}
+          size="small"
+          sx={{ ml: 'auto' }}
+        >
           {macroGoal.expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
-      {macroGoal.expanded && <Divider sx={{ mb: 2 }} />}
       {macroGoal.expanded && (
         <>
+          <Divider sx={{ mb: 2 }} />
           <Box display="flex" mb={2}>
             <TextField
               variant="outlined"
@@ -74,9 +70,6 @@ const MacroGoal = ({
                 microGoal={microGoal}
                 macroGoalIndex={macroGoalIndex}
                 microGoalIndex={microGoalIndex}
-                onToggleTask={onToggleTask}
-                onToggleExpand={onToggleExpand}
-                onAddTask={onAddTask}
               />
             ))}
           </List>

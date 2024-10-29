@@ -82,8 +82,8 @@ const useGoalsUpdater = () => {
     }
   };
 
-  // Update the completion status of a specific task
-  const updateTaskStatus = async (goalIndex, microgoalIndex, taskIndex, completed) => {
+  // Toggle the completion status of a task
+  const toggleTaskCompletion = async (goalIndex, microgoalIndex, taskIndex) => {
     try {
       const updatedGoals = [...user.goals];
       if (
@@ -95,14 +95,56 @@ const useGoalsUpdater = () => {
         return;
       }
 
-      // Update the task's completed status
-      updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex].completed = completed;
+      // Toggle the task's completion status
+      updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex].completed =
+        !updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex].completed;
 
       // Update the user profile in Firestore
       await updateProfile({ goals: updatedGoals });
-      console.log('Task status updated successfully.');
+      console.log('Task completion status toggled successfully.');
     } catch (err) {
-      console.error('Error updating task status:', err);
+      console.error('Error toggling task completion:', err);
+    }
+  };
+
+  // Check if a goal is expanded and toggle its expansion state
+  const toggleGoalExpansion = async (goalIndex) => {
+    try {
+      const updatedGoals = [...user.goals];
+      if (!updatedGoals[goalIndex]) {
+        console.error('Specified goal does not exist');
+        return;
+      }
+
+      // Toggle the goal's expanded state
+      updatedGoals[goalIndex].expanded = !updatedGoals[goalIndex].expanded;
+
+      // Update the user profile in Firestore
+      await updateProfile({ goals: updatedGoals });
+      console.log('Goal expansion toggled successfully.');
+    } catch (err) {
+      console.error('Error toggling goal expansion:', err);
+    }
+  };
+
+  // Toggle the expanded state of a specific microgoal
+  const toggleMicroGoalExpansion = async (goalIndex, microgoalIndex) => {
+    try {
+      const updatedGoals = [...user.goals];
+      if (!updatedGoals[goalIndex] || !updatedGoals[goalIndex].microgoals[microgoalIndex]) {
+        console.error('Specified goal or microgoal does not exist');
+        return;
+      }
+
+      // Toggle the expanded state of the microgoal
+      updatedGoals[goalIndex].microgoals[microgoalIndex].expanded =
+        !updatedGoals[goalIndex].microgoals[microgoalIndex].expanded;
+
+      // Update the user profile in Firestore
+      await updateProfile({ goals: updatedGoals });
+      console.log('Microgoal expansion toggled successfully.');
+    } catch (err) {
+      console.error('Error toggling microgoal expansion:', err);
     }
   };
 
@@ -110,7 +152,9 @@ const useGoalsUpdater = () => {
     addGoal,
     addMicrogoal,
     addTask,
-    updateTaskStatus,
+    toggleTaskCompletion,
+    toggleGoalExpansion,
+    toggleMicroGoalExpansion,
   };
 };
 

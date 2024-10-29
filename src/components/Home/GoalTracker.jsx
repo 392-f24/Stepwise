@@ -6,77 +6,14 @@ import { useState } from 'react';
 
 export default function GoalTracker() {
   const { user } = useUser();
-  const { addGoal } = useGoalsUpdater();
-  const [goals, setGoals] = useState(user.goals);
-
+  const { addGoal, addMicrogoal, addTask, updateTaskStatus } = useGoalsUpdater();
   const [newGoalName, setNewGoalName] = useState('');
-
-  const handleToggleTask = (macroGoalIndex, microGoalIndex, taskIndex) => {
-    setGoals((prevGoals) =>
-      prevGoals.map((macroGoal, mgi) =>
-        mgi === macroGoalIndex
-          ? {
-              ...macroGoal,
-              microgoals: macroGoal.microgoals.map((microGoal, mgi) =>
-                mgi === microGoalIndex
-                  ? {
-                      ...microGoal,
-                      tasks: microGoal.tasks.map((task, ti) =>
-                        ti === taskIndex ? { ...task, completed: !task.completed } : task,
-                      ),
-                    }
-                  : microGoal,
-              ),
-            }
-          : macroGoal,
-      ),
-    );
-  };
-
-  const handleToggleExpand = (macroGoalIndex, microGoalIndex) => {
-    setGoals((prevGoals) =>
-      prevGoals.map((macroGoal, mgi) =>
-        mgi === macroGoalIndex
-          ? microGoalIndex !== undefined
-            ? {
-                ...macroGoal,
-                microgoals: macroGoal.microgoals.map((microGoal, mgi) =>
-                  mgi === microGoalIndex
-                    ? { ...microGoal, expanded: !microGoal.expanded }
-                    : microGoal,
-                ),
-              }
-            : { ...macroGoal, expanded: !macroGoal.expanded }
-          : macroGoal,
-      ),
-    );
-  };
 
   const handleAddGoal = async () => {
     if (newGoalName.trim()) {
       await addGoal(newGoalName);
-      setGoals((prevGoals) => [
-        ...prevGoals,
-        { name: newGoalName, expanded: false, microgoals: [] },
-      ]);
       setNewGoalName('');
     }
-  };
-
-  const handleAddMicroGoal = async (macroGoalIndex, newMicroGoal) => {
-    setGoals((prevGoals) => {
-      const updatedGoals = [...prevGoals];
-      updatedGoals[macroGoalIndex].microgoals.push(newMicroGoal);
-      return updatedGoals;
-    });
-  };
-
-  const handleAddTask = async (macroGoalIndex, microGoalIndex, newTask) => {
-    setGoals((prevGoals) => {
-      const updatedGoals = [...prevGoals];
-      updatedGoals[macroGoalIndex].microgoals[microGoalIndex].tasks.push(newTask);
-      return updatedGoals;
-    });
   };
 
   return (
@@ -93,15 +30,19 @@ export default function GoalTracker() {
           Add Goal
         </Button>
       </Box>
-      {goals.map((macroGoal, macroGoalIndex) => (
+      {user.goals.map((macroGoal, macroGoalIndex) => (
         <MacroGoal
-          key={macroGoalIndex} // Use the index as the key
+          key={macroGoalIndex}
           macroGoal={macroGoal}
-          macroGoalIndex={macroGoalIndex} // Pass the index
-          onToggleTask={handleToggleTask}
-          onToggleExpand={handleToggleExpand}
-          onAddMicroGoal={handleAddMicroGoal}
-          onAddTask={handleAddTask}
+          macroGoalIndex={macroGoalIndex}
+          onToggleTask={(microGoalIndex, taskIndex, completed) =>
+            updateTaskStatus(macroGoalIndex, microGoalIndex, taskIndex, completed)
+          }
+          onToggleExpand={(microGoalIndex) => addMicrogoal(macroGoalIndex, microGoalIndex)}
+          onAddMicroGoal={(microGoalName) => addMicrogoal(macroGoalIndex, microGoalName)}
+          onAddTask={(microGoalIndex, taskName) =>
+            addTask(macroGoalIndex, microGoalIndex, taskName)
+          }
         />
       ))}
     </Box>
