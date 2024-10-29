@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 export default function GoalTracker() {
   const { user } = useUser();
-  const { addGoal, addMicrogoal, addTask, updateTaskStatus } = useGoalsUpdater();
+  const { addGoal } = useGoalsUpdater();
   const [newGoalName, setNewGoalName] = useState('');
 
   const handleAddGoal = async () => {
@@ -30,20 +30,8 @@ export default function GoalTracker() {
           Add Goal
         </Button>
       </Box>
-      {user.goals.map((macroGoal, macroGoalIndex) => (
-        <MacroGoal
-          key={macroGoalIndex}
-          macroGoal={macroGoal}
-          macroGoalIndex={macroGoalIndex}
-          onToggleTask={(microGoalIndex, taskIndex, completed) =>
-            updateTaskStatus(macroGoalIndex, microGoalIndex, taskIndex, completed)
-          }
-          onToggleExpand={(microGoalIndex) => addMicrogoal(macroGoalIndex, microGoalIndex)}
-          onAddMicroGoal={(microGoalName) => addMicrogoal(macroGoalIndex, microGoalName)}
-          onAddTask={(microGoalIndex, taskName) =>
-            addTask(macroGoalIndex, microGoalIndex, taskName)
-          }
-        />
+      {user.goals.map((macroGoal, index) => (
+        <MacroGoal key={index} macroGoal={macroGoal} macroGoalIndex={index} />
       ))}
     </Box>
   );

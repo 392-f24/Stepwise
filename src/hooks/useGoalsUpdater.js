@@ -1,160 +1,86 @@
 import { useUser } from '@contexts/UserContext';
 
-/**
- * Custom hook to manage user goals, microgoals, and tasks.
- */
 const useGoalsUpdater = () => {
   const { user, updateProfile } = useUser();
 
-  // Add a new goal
-  const addGoal = async (goalName) => {
+  // Update the goals in the user profile
+  const updateGoals = async (updatedGoals, message) => {
     try {
-      const newGoal = {
-        name: goalName,
-        expanded: false,
-        microgoals: [],
-      };
-
-      // Add the new goal to the goals array
-      const updatedGoals = [...user.goals, newGoal];
-
-      // Update the user profile in Firestore
       await updateProfile({ goals: updatedGoals });
-      console.log('Goal added successfully.');
-    } catch (err) {
-      console.error('Error adding goal:', err);
+      console.log(message);
+    } catch (error) {
+      console.error(`Error updating goals: ${message}`, error);
     }
   };
 
-  // Add a new microgoal to a specific goal
-  const addMicrogoal = async (goalIndex, microgoalName) => {
-    try {
-      const updatedGoals = [...user.goals];
-      if (!updatedGoals[goalIndex]) {
-        console.error('Specified goal does not exist');
-        return;
-      }
-
-      // Define the new microgoal structure
-      const newMicrogoal = {
-        name: microgoalName,
-        expanded: false,
-        tasks: [],
-      };
-
-      // Add the new microgoal to the specified goal's microgoals array
-      const targetGoal = { ...updatedGoals[goalIndex] };
-      targetGoal.microgoals = [...(targetGoal.microgoals || []), newMicrogoal];
-      updatedGoals[goalIndex] = targetGoal;
-
-      // Update the user profile in Firestore
-      await updateProfile({ goals: updatedGoals });
-      console.log('Microgoal added successfully.');
-    } catch (err) {
-      console.error('Error adding microgoal:', err);
+  // Add a new goal, microgoal, or task
+  const addItem = async (goalIndex, microGoalIndex, newItem, itemType) => {
+    const updatedGoals = [...user.goals];
+    let target = updatedGoals[goalIndex];
+    if (microGoalIndex !== undefined) {
+      target = target?.microgoals[microGoalIndex];
     }
+
+    if (!target) {
+      console.error(`${itemType} does not exist`);
+      return;
+    }
+
+    if (itemType === 'task') {
+      target.tasks.push(newItem);
+    } else if (itemType === 'microgoal') {
+      target.microgoals.push(newItem);
+    } else if (itemType === 'goal') {
+      updatedGoals.push(newItem);
+    }
+
+    await updateGoals(
+      updatedGoals,
+      `${itemType.charAt(0).toUpperCase() + itemType.slice(1)} added successfully.`,
+    );
   };
 
-  // Add a new task to a specific microgoal
-  const addTask = async (goalIndex, microgoalIndex, taskName) => {
-    try {
-      const updatedGoals = [...user.goals];
-      if (!updatedGoals[goalIndex] || !updatedGoals[goalIndex].microgoals[microgoalIndex]) {
-        console.error('Specified goal or microgoal does not exist');
-        return;
-      }
-
-      const newTask = {
-        name: taskName,
-        completed: false,
-      };
-
-      // Add the new task to the specified microgoal's tasks array
-      const targetMicrogoal = { ...updatedGoals[goalIndex].microgoals[microgoalIndex] };
-      targetMicrogoal.tasks = [...(targetMicrogoal.tasks || []), newTask];
-      updatedGoals[goalIndex].microgoals[microgoalIndex] = targetMicrogoal;
-
-      // Update the user profile in Firestore
-      await updateProfile({ goals: updatedGoals });
-      console.log('Task added successfully.');
-    } catch (err) {
-      console.error('Error adding task:', err);
-    }
+  // Toggle the expansion status of a goal or microgoal
+  const toggleExpansion = async (goalIndex, microGoalIndex) => {
+    const updatedGoals = [...user.goals];
+    const target =
+      microGoalIndex !== undefined
+        ? updatedGoals[goalIndex].microgoals[microGoalIndex]
+        : updatedGoals[goalIndex];
+    target.expanded = !target.expanded;
+    await updateGoals(updatedGoals, 'Expansion toggled successfully.');
   };
 
   // Toggle the completion status of a task
   const toggleTaskCompletion = async (goalIndex, microgoalIndex, taskIndex) => {
-    try {
-      const updatedGoals = [...user.goals];
-      if (
-        !updatedGoals[goalIndex] ||
-        !updatedGoals[goalIndex].microgoals[microgoalIndex] ||
-        !updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex]
-      ) {
-        console.error('Specified goal, microgoal, or task does not exist');
-        return;
-      }
-
-      // Toggle the task's completion status
-      updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex].completed =
-        !updatedGoals[goalIndex].microgoals[microgoalIndex].tasks[taskIndex].completed;
-
-      // Update the user profile in Firestore
-      await updateProfile({ goals: updatedGoals });
-      console.log('Task completion status toggled successfully.');
-    } catch (err) {
-      console.error('Error toggling task completion:', err);
+    const updatedGoals = [...user.goals];
+    const task = updatedGoals[goalIndex]?.microgoals[microgoalIndex]?.tasks[taskIndex];
+    if (!task) {
+      console.error('Specified goal, microgoal, or task does not exist');
+      return;
     }
-  };
-
-  // Check if a goal is expanded and toggle its expansion state
-  const toggleGoalExpansion = async (goalIndex) => {
-    try {
-      const updatedGoals = [...user.goals];
-      if (!updatedGoals[goalIndex]) {
-        console.error('Specified goal does not exist');
-        return;
-      }
-
-      // Toggle the goal's expanded state
-      updatedGoals[goalIndex].expanded = !updatedGoals[goalIndex].expanded;
-
-      // Update the user profile in Firestore
-      await updateProfile({ goals: updatedGoals });
-      console.log('Goal expansion toggled successfully.');
-    } catch (err) {
-      console.error('Error toggling goal expansion:', err);
-    }
-  };
-
-  // Toggle the expanded state of a specific microgoal
-  const toggleMicroGoalExpansion = async (goalIndex, microgoalIndex) => {
-    try {
-      const updatedGoals = [...user.goals];
-      if (!updatedGoals[goalIndex] || !updatedGoals[goalIndex].microgoals[microgoalIndex]) {
-        console.error('Specified goal or microgoal does not exist');
-        return;
-      }
-
-      // Toggle the expanded state of the microgoal
-      updatedGoals[goalIndex].microgoals[microgoalIndex].expanded =
-        !updatedGoals[goalIndex].microgoals[microgoalIndex].expanded;
-
-      // Update the user profile in Firestore
-      await updateProfile({ goals: updatedGoals });
-      console.log('Microgoal expansion toggled successfully.');
-    } catch (err) {
-      console.error('Error toggling microgoal expansion:', err);
-    }
+    task.completed = !task.completed;
+    await updateGoals(updatedGoals, 'Task completion status toggled successfully.');
   };
 
   return {
-    addGoal,
-    addMicrogoal,
-    addTask,
+    addGoal: (goalName) =>
+      addItem(undefined, undefined, { name: goalName, expanded: false, microgoals: [] }, 'goal'),
+    addMicrogoal: (goalIndex, microGoalName) =>
+      addItem(
+        goalIndex,
+        undefined,
+        { name: microGoalName, expanded: false, tasks: [] },
+        'microgoal',
+      ),
+    addTask: (goalIndex, microGoalIndex, taskName) =>
+      addItem(goalIndex, microGoalIndex, { name: taskName, completed: false }, 'task'),
+
     toggleTaskCompletion,
-    toggleGoalExpansion,
-    toggleMicroGoalExpansion,
+
+    toggleGoalExpansion: (goalIndex) => toggleExpansion(goalIndex),
+    toggleMicroGoalExpansion: (goalIndex, microGoalIndex) =>
+      toggleExpansion(goalIndex, microGoalIndex),
   };
 };
 

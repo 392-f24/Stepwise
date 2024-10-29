@@ -1,16 +1,14 @@
 import ProgressIndicator from '@components/Home/ProgressIndicator';
 import Task from '@components/Home/Task';
 import useGoalsUpdater from '@hooks/useGoalsUpdater';
-import { ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Box, Button, IconButton, List, Paper, TextField, Typography } from '@mui/material';
+import { calculateProgress } from '@utils/calculateProgress';
 import { useState } from 'react';
 
 const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
   const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion } = useGoalsUpdater();
-  const completedTasks = microGoal.tasks.filter((t) => t.completed).length;
-  const totalTasks = microGoal.tasks.length;
-  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
+  const progress = calculateProgress([microGoal]);
   const [newTaskName, setNewTaskName] = useState('');
 
   const handleAddTask = async () => {
@@ -30,7 +28,7 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
           size="small"
           sx={{ ml: 'auto' }}
         >
-          {microGoal.expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          {microGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
       </Box>
       {microGoal.expanded && (
@@ -38,7 +36,7 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
           <List sx={{ mt: 1, pl: 4 }}>
             {microGoal.tasks.map((task, taskIndex) => (
               <Task
-                key={`${macroGoalIndex}-${microGoalIndex}-${taskIndex}`}
+                key={taskIndex}
                 task={task}
                 onToggle={() => toggleTaskCompletion(macroGoalIndex, microGoalIndex, taskIndex)}
               />
