@@ -3,7 +3,7 @@ import { useUser } from '@contexts/UserContext';
 /**
  * Custom hook to manage user goals, microgoals, and tasks.
  */
-const useGoalsManager = () => {
+const useGoalsUpdater = () => {
   const { user, updateProfile } = useUser();
 
   // Add a new goal
@@ -16,7 +16,7 @@ const useGoalsManager = () => {
       };
 
       // Add the new goal to the goals array
-      const updatedGoals = [...(user.goals || []), newGoal];
+      const updatedGoals = [...user.goals, newGoal];
 
       // Update the user profile in Firestore
       await updateProfile({ goals: updatedGoals });
@@ -29,7 +29,7 @@ const useGoalsManager = () => {
   // Add a new microgoal to a specific goal
   const addMicrogoal = async (goalIndex, microgoalName) => {
     try {
-      const updatedGoals = [...(user.goals || [])];
+      const updatedGoals = [...user.goals];
       if (!updatedGoals[goalIndex]) {
         console.error('Specified goal does not exist');
         return;
@@ -58,7 +58,7 @@ const useGoalsManager = () => {
   // Add a new task to a specific microgoal
   const addTask = async (goalIndex, microgoalIndex, taskName) => {
     try {
-      const updatedGoals = [...(user.goals || [])];
+      const updatedGoals = [...user.goals];
       if (!updatedGoals[goalIndex] || !updatedGoals[goalIndex].microgoals[microgoalIndex]) {
         console.error('Specified goal or microgoal does not exist');
         return;
@@ -85,7 +85,7 @@ const useGoalsManager = () => {
   // Update the completion status of a specific task
   const updateTaskStatus = async (goalIndex, microgoalIndex, taskIndex, completed) => {
     try {
-      const updatedGoals = [...(user.goals || [])];
+      const updatedGoals = [...user.goals];
       if (
         !updatedGoals[goalIndex] ||
         !updatedGoals[goalIndex].microgoals[microgoalIndex] ||
@@ -114,4 +114,4 @@ const useGoalsManager = () => {
   };
 };
 
-export default useGoalsManager;
+export default useGoalsUpdater;
