@@ -1,8 +1,10 @@
 import { useUser } from '@contexts/UserContext';
+import useGoalsManager from '@hooks/useGoalsUpdater';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Box,
+  Button,
   Checkbox,
   CircularProgress,
   Divider,
@@ -11,6 +13,7 @@ import {
   ListItem,
   ListItemText,
   Paper,
+  TextField,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
@@ -44,9 +47,28 @@ const Task = ({ task, onToggle }) => (
   </ListItem>
 );
 
-const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex, onToggleTask, onToggleExpand }) => {
-  const progress =
-    (microGoal.tasks.filter((t) => t.completed).length / microGoal.tasks.length) * 100;
+const MicroGoal = ({
+  microGoal,
+  macroGoalIndex,
+  microGoalIndex,
+  onToggleTask,
+  onToggleExpand,
+  onAddTask,
+}) => {
+  const completedTasks = microGoal.tasks.filter((t) => t.completed).length;
+  const totalTasks = microGoal.tasks.length;
+  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0; // Check for totalTasks
+
+  const { addTask } = useGoalsManager();
+  const [newTaskName, setNewTaskName] = useState('');
+
+  const handleAddTask = async () => {
+    if (newTaskName.trim()) {
+      await addTask(macroGoalIndex, microGoalIndex, newTaskName);
+      onAddTask(macroGoalIndex, microGoalIndex, { name: newTaskName, completed: false });
+      setNewTaskName('');
+    }
+  };
 
   return (
     <Paper elevation={2} sx={{ p: 2, mb: 2, bgcolor: 'background.default' }}>
@@ -62,25 +84,59 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex, onToggleTask, on
         </IconButton>
       </Box>
       {microGoal.expanded && (
-        <List sx={{ mt: 1, pl: 4 }}>
-          {microGoal.tasks.map((task, taskIndex) => (
-            <Task
-              key={`${macroGoalIndex}-${microGoalIndex}-${taskIndex}`} // Unique key for tasks
-              task={task}
-              onToggle={() => onToggleTask(macroGoalIndex, microGoalIndex, taskIndex)}
+        <>
+          <List sx={{ mt: 1, pl: 4 }}>
+            {microGoal.tasks.map((task, taskIndex) => (
+              <Task
+                key={`${macroGoalIndex}-${microGoalIndex}-${taskIndex}`}
+                task={task}
+                onToggle={() => onToggleTask(macroGoalIndex, microGoalIndex, taskIndex)}
+              />
+            ))}
+          </List>
+          <Box display="flex" mt={2}>
+            <TextField
+              variant="outlined"
+              label="New Task"
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+              fullWidth
             />
-          ))}
-        </List>
+            <Button variant="contained" onClick={handleAddTask} sx={{ ml: 1 }}>
+              Add Task
+            </Button>
+          </Box>
+        </>
       )}
     </Paper>
   );
 };
 
-const MacroGoal = ({ macroGoal, macroGoalIndex, onToggleTask, onToggleExpand }) => {
-  const progress =
-    (macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.filter((t) => t.completed).length, 0) /
-      macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.length, 0)) *
-    100;
+const MacroGoal = ({
+  macroGoal,
+  macroGoalIndex,
+  onToggleTask,
+  onToggleExpand,
+  onAddMicroGoal,
+  onAddTask,
+}) => {
+  const completedTasks = macroGoal.microgoals.reduce(
+    (acc, mg) => acc + mg.tasks.filter((t) => t.completed).length,
+    0,
+  );
+  const totalTasks = macroGoal.microgoals.reduce((acc, mg) => acc + mg.tasks.length, 0);
+  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+  const { addMicrogoal } = useGoalsManager();
+  const [newMicroGoalName, setNewMicroGoalName] = useState('');
+
+  const handleAddMicroGoal = async () => {
+    if (newMicroGoalName.trim()) {
+      await addMicrogoal(macroGoalIndex, newMicroGoalName);
+      onAddMicroGoal(macroGoalIndex, { name: newMicroGoalName, expanded: false, tasks: [] });
+      setNewMicroGoalName('');
+    }
+  };
 
   return (
     <Paper elevation={3} sx={{ p: 3, mb: 4, bgcolor: 'background.paper' }}>
@@ -93,20 +149,36 @@ const MacroGoal = ({ macroGoal, macroGoalIndex, onToggleTask, onToggleExpand }) 
           {macroGoal.expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
-      <Divider sx={{ mb: 2 }} />
+      {macroGoal.expanded && <Divider sx={{ mb: 2 }} />}
       {macroGoal.expanded && (
-        <List sx={{ pl: 2 }}>
-          {macroGoal.microgoals.map((microGoal, microGoalIndex) => (
-            <MicroGoal
-              key={`${macroGoalIndex}-${microGoalIndex}`} // Unique key for microgoals
-              microGoal={microGoal}
-              macroGoalIndex={macroGoalIndex}
-              microGoalIndex={microGoalIndex} // Pass the micro goal index
-              onToggleTask={onToggleTask}
-              onToggleExpand={onToggleExpand}
+        <>
+          <Box display="flex" mb={2}>
+            <TextField
+              variant="outlined"
+              label="New Microgoal"
+              value={newMicroGoalName}
+              onChange={(e) => setNewMicroGoalName(e.target.value)}
+              fullWidth
+              sx={{ mr: 1 }}
             />
-          ))}
-        </List>
+            <Button variant="contained" onClick={handleAddMicroGoal}>
+              Add Microgoal
+            </Button>
+          </Box>
+          <List sx={{ pl: 2 }}>
+            {macroGoal.microgoals.map((microGoal, microGoalIndex) => (
+              <MicroGoal
+                key={`${macroGoalIndex}-${microGoalIndex}`}
+                microGoal={microGoal}
+                macroGoalIndex={macroGoalIndex}
+                microGoalIndex={microGoalIndex}
+                onToggleTask={onToggleTask}
+                onToggleExpand={onToggleExpand}
+                onAddTask={onAddTask}
+              />
+            ))}
+          </List>
+        </>
       )}
     </Paper>
   );
@@ -114,7 +186,10 @@ const MacroGoal = ({ macroGoal, macroGoalIndex, onToggleTask, onToggleExpand }) 
 
 export default function GoalTracker() {
   const { user, loading } = useUser();
-  const [goals, setGoals] = useState(user.goals || []);
+  const { addGoal } = useGoalsManager();
+  const [goals, setGoals] = useState(user.goals);
+
+  const [newGoalName, setNewGoalName] = useState('');
 
   const handleToggleTask = (macroGoalIndex, microGoalIndex, taskIndex) => {
     setGoals((prevGoals) =>
@@ -157,20 +232,63 @@ export default function GoalTracker() {
     );
   };
 
+  const handleAddGoal = async () => {
+    if (newGoalName.trim()) {
+      await addGoal(newGoalName);
+      setGoals((prevGoals) => [
+        ...prevGoals,
+        { name: newGoalName, expanded: false, microgoals: [] },
+      ]);
+      setNewGoalName('');
+    }
+  };
+
+  const handleAddMicroGoal = async (macroGoalIndex, newMicroGoal) => {
+    setGoals((prevGoals) => {
+      const updatedGoals = [...prevGoals];
+      updatedGoals[macroGoalIndex].microgoals.push(newMicroGoal);
+      return updatedGoals;
+    });
+  };
+
+  const handleAddTask = async (macroGoalIndex, microGoalIndex, newTask) => {
+    setGoals((prevGoals) => {
+      const updatedGoals = [...prevGoals];
+      updatedGoals[macroGoalIndex].microgoals[microGoalIndex].tasks.push(newTask);
+      return updatedGoals;
+    });
+  };
+
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', pt: 4 }}>
       {loading ? (
         <CircularProgress />
       ) : (
-        goals.map((macroGoal, macroGoalIndex) => (
-          <MacroGoal
-            key={macroGoalIndex} // Use the index as the key
-            macroGoal={macroGoal}
-            macroGoalIndex={macroGoalIndex} // Pass the index
-            onToggleTask={handleToggleTask}
-            onToggleExpand={handleToggleExpand}
-          />
-        ))
+        <>
+          <Box display="flex" mb={3}>
+            <TextField
+              variant="outlined"
+              label="New Goal"
+              value={newGoalName}
+              onChange={(e) => setNewGoalName(e.target.value)}
+              fullWidth
+            />
+            <Button variant="contained" onClick={handleAddGoal} sx={{ ml: 2 }}>
+              Add Goal
+            </Button>
+          </Box>
+          {goals.map((macroGoal, macroGoalIndex) => (
+            <MacroGoal
+              key={macroGoalIndex} // Use the index as the key
+              macroGoal={macroGoal}
+              macroGoalIndex={macroGoalIndex} // Pass the index
+              onToggleTask={handleToggleTask}
+              onToggleExpand={handleToggleExpand}
+              onAddMicroGoal={handleAddMicroGoal}
+              onAddTask={handleAddTask}
+            />
+          ))}
+        </>
       )}
     </Box>
   );
