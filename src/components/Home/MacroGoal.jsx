@@ -1,75 +1,43 @@
+import AddItem from '@components/Home/AddItem';
 import MicroGoal from '@components/Home/MicroGoal';
 import ProgressIndicator from '@components/Home/ProgressIndicator';
 import useGoalsUpdater from '@hooks/useGoalsUpdater';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  List,
-  Paper,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Collapse, Divider, IconButton, List, Paper, Typography } from '@mui/material';
 import { calculateProgress } from '@utils/calculateProgress';
-import { useState } from 'react';
 
 const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
   const { addMicrogoal, toggleGoalExpansion } = useGoalsUpdater();
-  const [newMicroGoalName, setNewMicroGoalName] = useState('');
   const progress = calculateProgress(macroGoal.microgoals);
 
-  const handleAddMicroGoal = async () => {
-    if (newMicroGoalName.trim()) {
-      await addMicrogoal(macroGoalIndex, newMicroGoalName);
-      setNewMicroGoalName('');
-    }
-  };
-
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 4, bgcolor: 'background.paper' }}>
-      <Box display="flex" alignItems="center" mb={2}>
-        <ProgressIndicator value={progress} size={48} thickness={4} />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+    <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+      <Box display="flex" alignItems="center">
+        <ProgressIndicator value={progress} size={40} thickness={3} />
+        <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
           {macroGoal.name}
         </Typography>
-        <IconButton
-          onClick={() => toggleGoalExpansion(macroGoalIndex)}
-          size="small"
-          sx={{ ml: 'auto' }}
-        >
+        <IconButton onClick={() => toggleGoalExpansion(macroGoalIndex)} size="small">
           {macroGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
       </Box>
-      {macroGoal.expanded && (
-        <>
-          <Divider sx={{ mb: 2 }} />
-          <Box display="flex" mb={2}>
-            <TextField
-              variant="outlined"
-              label="New Microgoal"
-              value={newMicroGoalName}
-              onChange={(e) => setNewMicroGoalName(e.target.value)}
-              fullWidth
-              sx={{ mr: 1 }}
+      <Collapse in={macroGoal.expanded} timeout="auto" unmountOnExit>
+        <Divider sx={{ my: 1 }} />
+        <AddItem
+          label="New Microgoal"
+          onAdd={(microGoalName) => addMicrogoal(macroGoalIndex, microGoalName)}
+        />
+        <List>
+          {macroGoal.microgoals.map((microGoal, microGoalIndex) => (
+            <MicroGoal
+              key={microGoalIndex}
+              microGoal={microGoal}
+              macroGoalIndex={macroGoalIndex}
+              microGoalIndex={microGoalIndex}
             />
-            <Button variant="contained" onClick={handleAddMicroGoal}>
-              Add Microgoal
-            </Button>
-          </Box>
-          <List sx={{ pl: 2 }}>
-            {macroGoal.microgoals.map((microGoal, microGoalIndex) => (
-              <MicroGoal
-                key={microGoalIndex}
-                microGoal={microGoal}
-                macroGoalIndex={macroGoalIndex}
-                microGoalIndex={microGoalIndex}
-              />
-            ))}
-          </List>
-        </>
-      )}
+          ))}
+        </List>
+      </Collapse>
     </Paper>
   );
 };

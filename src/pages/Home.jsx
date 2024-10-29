@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 const Home = () => {
   return (
-    <Box sx={{ width: '90%', margin: 'auto' }}>
+    <Box sx={{ width: '95%', margin: 'auto' }}>
       <GoalTracker />
     </Box>
   );
