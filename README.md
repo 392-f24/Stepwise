@@ -11,12 +11,20 @@
    - [How to Use UserContext](#3-how-to-use-usercontext)
      - [Accessing User Data](#accessing-user-data)
      - [Updating User Data](#updating-user-data)
+3. [useGoalsUpdater](#3-usegoalsupdater-hook)
+   - [Overview](#overview)
+   - [Dependencies](#dependencies)
+   - [Functions](#functions)
+     - [Adding items](#adding-items)
+     - [Deleting items](#deleting-items)
+     - [Toggle Task Completion](#toggle-task-completion)
+     - [Expanding/collapsing items](#expandingcollapsing-items)
 
 ## 1. File Structure and Logic
 
 This project uses a component-based structure with a focus on clear separation of concerns. Key files and folders:
 
-```
+```plaintext
 .
 ├── LICENSE
 ├── README.md                  # Project documentation and usage guide
@@ -94,3 +102,86 @@ Use the `updateProfile` function to update user profile information:
    ```
 
 The `updateProfile` function accepts an object with updated user fields and syncs them with both the context and Firebase, ensuring efficient data sharing across components and reducing the need for direct database access.
+
+## 3. useGoalsUpdater Hook
+
+### Overview
+
+The `useGoalsUpdater` custom hook provides functions to manage user goals, microgoals, and tasks by:
+
+1. updating the user's profile goals by adding/deleting items (goal, microgoal, task),
+2. deleting items (goal, microgoal, task),
+3. toggling completion status for tasks, and
+4. expanding or collapsing goals and microgoals.
+
+This hook enables efficient management of goal-related actions across components, reducing repetitive code and ensuring consistent updates.
+
+### Dependencies
+
+- `useUser`: A custom context hook for accessing and updating the user's profile information, including user goals.
+
+### Functions
+
+#### Adding items
+
+- **addGoal**: Adds a new goal with an optional name.
+
+```jsx
+addGoal("New Goal Name");
+```
+  
+- **addMicrogoal**: Adds a new microgoal within a specified goal.
+
+```jsx
+addMicrogoal(goalIndex, "New Microgoal Name");
+```
+  
+- **addTask**: Adds a new task within a specified microgoal.  
+
+```jsx
+addTask(goalIndex, microGoalIndex, "New Task Name");
+```
+
+#### Deleting items
+
+- **deleteGoal**: Deletes a goal.  
+
+```jsx
+deleteGoal(goalIndex);
+```
+  
+- **deleteMicrogoal**: Deletes a microgoal within a specified goal.
+
+```jsx
+deleteMicrogoal(goalIndex, microGoalIndex);
+```
+  
+- **deleteTask**: Deletes a task within a specified microgoal.
+
+```jsx
+deleteTask(goalIndex, microGoalIndex, taskIndex);
+```
+
+#### Toggle Task Completion
+
+- **toggleTaskCompletion**: Toggles the completion status of a task.
+
+```jsx
+toggleTaskCompletion(goalIndex, microGoalIndex, taskIndex);
+```
+
+#### Expanding/collapsing items
+
+- **toggleGoalExpansion**: Toggles the expansion state of a goal.
+
+```jsx
+toggleGoalExpansion(goalIndex);
+```
+  
+- **toggleMicroGoalExpansion**: Toggles the expanded/collapsed state of a microgoal within a specified goal.
+
+```jsx
+toggleMicroGoalExpansion(goalIndex, microGoalIndex);
+```
+
+These functions directly update the `UserContext`, ensuring consistent data and logging status messages for clear feedback on each action performed.
