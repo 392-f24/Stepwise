@@ -33,7 +33,7 @@ const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
         color={value >= 100 ? 'success.main' : 'text.secondary'}
         sx={{
           fontWeight: value >= 100 ? 'bold' : 'normal',
-          fontSize: value >= 100 ? '0.75rem' : 'inherit',
+          fontSize: value >= 10 ? '0.65rem' : 'inherit',
         }}
       >
         {`${Math.round(value)}%`}
