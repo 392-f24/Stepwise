@@ -13,7 +13,7 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
   return (
     <Paper elevation={1} sx={{ p: 1, mb: 2, bgcolor: 'background.default', borderRadius: 1 }}>
       <Box display="flex" alignItems="center">
-        <ProgressIndicator value={progress} size={30} thickness={3} />
+        <ProgressIndicator value={progress} size={40} thickness={3} />
         <Typography variant="subtitle1" sx={{ flexGrow: 1, ml: 1 }}>
           {microGoal.name}
         </Typography>
