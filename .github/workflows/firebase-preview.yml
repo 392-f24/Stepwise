@@ -29,7 +29,41 @@ jobs:
         run: npm run build
 
       - name: 🧪 Test the app with Vitest
-        run: npm run test:ci
+        run: npm run test:ci | tee test-results.txt
+
+      # 🚮 Clean up test results for comment
+      - name: 🚮 Clean up test results
+        run: sed -i 's/\x1b\[[0-9;]*m//g' test-results.txt # Removes ANSI color codes
+
+      # 📄 Format test results for better readability
+      - name: 📄 Format test results
+        run: |
+          {
+            echo "### 🧪 Test Results"
+            echo ""
+            if grep -q "failed" test-results.txt; then
+              # Extract failed test details if any
+              echo "❌ **Some tests failed**:"
+              echo '```'
+              grep -E "Test Files|Tests|Duration|failed" test-results.txt
+              echo '```'
+              echo ""
+              echo "💥 Please review the failed tests above."
+            else
+              # Format output for passing tests
+              grep -E "(Test Files|Tests|Duration)" test-results.txt | while read -r line; do
+                if [[ $line == *"Test Files"* ]]; then
+                  echo "🗂 **Test Summary**: $line"
+                elif [[ $line == *"Tests"* ]]; then
+                  echo "✅ **Tests Passed**: $line"
+                elif [[ $line == *"Duration"* ]]; then
+                  echo "⏱️ **Total Duration**: $line"
+                fi
+              done
+              echo ""
+              echo "🎉 All tests passed successfully!"
+            fi
+          } > formatted-results.txt
 
       - name: 🚀 Install Firebase CLI
         run: npm install -g firebase-tools
@@ -52,9 +86,11 @@ jobs:
         with:
           script: |
             const previewUrl = process.env.PREVIEW_URL;
+            const fs = require('fs');
+            const testResults = fs.readFileSync('formatted-results.txt', 'utf8');
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 Preview for this PR is available at: ${previewUrl}`
+              body: `🚀 Preview for this PR is available at: ${previewUrl} \n\n ${testResults}`
             });
