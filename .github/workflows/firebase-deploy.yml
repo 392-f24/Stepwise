@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   build:
-    name: 🧱 Build and Test
+    name: 🧪 Test before Build
     runs-on: ubuntu-latest
 
     steps:
@@ -39,9 +39,6 @@ jobs:
       - name: 🧪 Run Tests with Vitest
         run: npm run test:ci
 
-      - name: 🔨 Build Project
-        run: npm run build
-
   deploy:
     name: 🚀 Deploy to Firebase
     needs: build # Only run this job if the build job is successful
@@ -55,6 +52,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: 📂 Install Packages
+        run: npm ci
+
+      - name: 🧱 Build
+        run: npm run build
 
       - name: 🌍 Install Firebase Tools
         run: npm install -g firebase-tools
