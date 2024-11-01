@@ -1,92 +1,64 @@
 import FireIcon from '@mui/icons-material/Whatshot';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import '@styles/StreakPage.css';
-
-// Days of the week headers
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Streak = () => {
-  //  Hard coded streak days
+  // Define the streak count and the hard-coded completed dates as strings
   const streakCount = 7;
-  const completedDays = [18, 19, 22, 23, 24, 25, 26, 27, 28];
+  const completedDays = [
+    '2024-10-18',
+    '2024-10-19',
+    '2024-10-22',
+    '2024-10-23',
+    '2024-10-24',
+    '2024-10-25',
+    '2024-10-26',
+    '2024-10-27',
+    '2024-10-28',
+  ];
 
-  //month start and end dates
-  const monthStart = new Date(2024, 9, 1);
-  const monthEnd = new Date(2024, 9 + 1, 0);
+  // Get today's date for comparison
+  const today = new Date();
+  const todayString = today.toISOString().split('T')[0];
 
-  // Array to hold each day in October 2024 with the correct weekday alignment
-  const daysInCalendar = [];
-  const totalDays = monthEnd.getDate();
-  const startDay = monthStart.getDay();
-
-  // Adding empty cells for days before the month starts
-  for (let i = 0; i < startDay; i++) {
-    daysInCalendar.push(null);
-  }
-  for (let day = 1; day <= totalDays; day++) {
-    daysInCalendar.push({
-      day,
-      completed: completedDays.includes(day),
-    });
-  }
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
+      {/* Display the large fire icon and streak count */}
       <FireIcon
         sx={{
           fontSize: 80,
           color: 'primary.dark',
-          animation: 'burn-animation 1s infinite',
+          animation: 'burn-animation 1.5s infinite',
         }}
       />
       <Typography variant="h4" sx={{ fontWeight: 'bold', mt: 2, mb: 3 }}>
         {streakCount} Day Streak
       </Typography>
 
-      <Typography variant="body2" sx={{ mb: 1, fontSize: '1rem' }}>
-        October 2024
-      </Typography>
+      {/* Calendar with conditional fire icons */}
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Calendar
+          tileContent={({ date, view }) => {
+            const formattedDate = date.toISOString().split('T')[0];
+            const isCompleted = completedDays.includes(formattedDate);
+            const isPastOrToday = formattedDate <= todayString;
 
-      {/* Days of the Week Headers */}
-      <Grid container spacing={1} sx={{ margin: 'auto' }}>
-        {daysOfWeek.map((day) => (
-          <Grid item xs={12 / 7} key={day}>
-            <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-              {day}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Calendar Grid */}
-      <Grid container spacing={1} sx={{ margin: 'auto' }}>
-        {daysInCalendar.map((dayObj, index) => (
-          <Grid item xs={12 / 7} key={index}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                height: '50px', // Height of each calendar cell
-              }}
-            >
-              {dayObj ? (
-                <>
-                  <Typography variant="caption">{dayObj.day}</Typography>
-                  <FireIcon
-                    sx={{
-                      color: dayObj.completed ? 'primary.main' : 'gray',
-                      fontSize: 28,
-                      animation: dayObj.completed ? 'burn-animation 3s infinite' : 'none',
-                    }}
-                  />
-                </>
-              ) : (
-                <Typography variant="caption">&nbsp;</Typography> // Empty space for non-month dates
-              )}
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
+            return view === 'month' && isPastOrToday ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FireIcon
+                  sx={{
+                    fontSize: 16,
+                    color: isCompleted ? 'primary.main' : 'gray', // Orange if completed, grey otherwise
+                    animation: isCompleted ? 'burn-animation 2s infinite' : 'none',
+                  }}
+                />
+              </Box>
+            ) : null;
+          }}
+        />
+      </Box>
     </Box>
   );
 };
