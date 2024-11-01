@@ -21,7 +21,7 @@ const useGoalsUpdater = () => {
       target = target?.microgoals[microGoalIndex];
     }
 
-    if (!target) {
+    if (!target && itemType !== 'goal') {
       console.error(`${itemType} does not exist`);
       return;
     }
