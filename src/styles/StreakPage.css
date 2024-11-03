@@ -1,22 +1,14 @@
-/* Centering and border removal from react calendar*/
-.react-calendar {
-    border: none;
-    width: 100%;
-    max-width: 500px;
-    color: black;
-}
-
 /* Custom weekday headers */
 .react-calendar__month-view__weekdays__weekday {
     text-transform: capitalize;
     font-weight: bold;
     color: black;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 /* Larger navigation arrows */
 .react-calendar__navigation button {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: black;
 }
 
