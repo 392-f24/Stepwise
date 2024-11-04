@@ -1,4 +1,5 @@
 import AddItem from '@components/Home/AddItem';
+import DeleteItem from '@components/Home/DeleteItem';
 import MicroGoal from '@components/Home/MicroGoal';
 import ProgressIndicator from '@components/Home/ProgressIndicator';
 import useGoalsUpdater from '@hooks/useGoalsUpdater';
@@ -7,7 +8,7 @@ import { Box, Collapse, Divider, IconButton, List, Paper, Typography } from '@mu
 import { calculateProgress } from '@utils/calculateProgress';
 
 const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
-  const { addMicrogoal, toggleGoalExpansion } = useGoalsUpdater();
+  const { addMicrogoal, toggleGoalExpansion, deleteGoal } = useGoalsUpdater();
   const progress = calculateProgress(macroGoal.microgoals);
 
   return (
@@ -17,6 +18,7 @@ const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
         <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
           {macroGoal.name}
         </Typography>
+        <DeleteItem deleteFunction={deleteGoal} goalIndex={macroGoalIndex} />
         <IconButton onClick={() => toggleGoalExpansion(macroGoalIndex)} size="small">
           {macroGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>

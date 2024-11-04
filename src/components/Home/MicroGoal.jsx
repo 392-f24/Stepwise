@@ -1,4 +1,5 @@
 import AddItem from '@components/Home/AddItem';
+import DeleteItem from '@components/Home/DeleteItem';
 import ProgressIndicator from '@components/Home/ProgressIndicator';
 import Task from '@components/Home/Task';
 import useGoalsUpdater from '@hooks/useGoalsUpdater';
@@ -7,7 +8,8 @@ import { Box, Collapse, IconButton, List, Paper, Typography } from '@mui/materia
 import { calculateProgress } from '@utils/calculateProgress';
 
 const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
-  const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion } = useGoalsUpdater();
+  const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion, deleteMicrogoal } =
+    useGoalsUpdater();
   const progress = calculateProgress([microGoal]);
 
   return (
@@ -17,6 +19,11 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
         <Typography variant="subtitle1" sx={{ flexGrow: 1, ml: 1 }}>
           {microGoal.name}
         </Typography>
+        <DeleteItem
+          deleteFunction={deleteMicrogoal}
+          goalIndex={macroGoalIndex}
+          microGoalIndex={microGoalIndex}
+        />
         <IconButton
           onClick={() => toggleMicroGoalExpansion(macroGoalIndex, microGoalIndex)}
           size="small"
@@ -30,6 +37,9 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
             <Task
               key={taskIndex}
               task={task}
+              macroGoalIndex={macroGoalIndex}
+              microGoalIndex={microGoalIndex}
+              taskIndex={taskIndex}
               onToggle={() => toggleTaskCompletion(macroGoalIndex, microGoalIndex, taskIndex)}
             />
           ))}
