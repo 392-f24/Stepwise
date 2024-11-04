@@ -8,7 +8,7 @@ import { Box, Collapse, Divider, IconButton, List, Paper, Typography } from '@mu
 import { calculateProgress } from '@utils/calculateProgress';
 
 const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
-  const { addMicrogoal, toggleGoalExpansion, deleteGoal } = useGoalsUpdater();
+  const { addMicrogoal, toggleGoalExpansion } = useGoalsUpdater();
   const progress = calculateProgress(macroGoal.microgoals);
 
   return (
@@ -18,7 +18,7 @@ const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
         <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
           {macroGoal.name}
         </Typography>
-        <DeleteItem deleteFunction={deleteGoal} goalIndex={macroGoalIndex} />
+        <DeleteItem goalIndex={macroGoalIndex} />
         <IconButton onClick={() => toggleGoalExpansion(macroGoalIndex)} size="small">
           {macroGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>

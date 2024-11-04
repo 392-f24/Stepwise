@@ -1,10 +1,7 @@
 import DeleteItem from '@components/Home/DeleteItem';
-import useGoalsUpdater from '@hooks/useGoalsUpdater';
 import { Checkbox, ListItem, ListItemText } from '@mui/material';
 
 const Task = ({ task, onToggle, macroGoalIndex, microGoalIndex, taskIndex }) => {
-  const { deleteTask } = useGoalsUpdater();
-
   return (
     <ListItem
       dense
@@ -35,7 +32,6 @@ const Task = ({ task, onToggle, macroGoalIndex, microGoalIndex, taskIndex }) => 
         }}
       />
       <DeleteItem
-        deleteFunction={deleteTask}
         goalIndex={macroGoalIndex}
         microGoalIndex={microGoalIndex}
         taskIndex={taskIndex}

@@ -8,8 +8,7 @@ import { Box, Collapse, IconButton, List, Paper, Typography } from '@mui/materia
 import { calculateProgress } from '@utils/calculateProgress';
 
 const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
-  const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion, deleteMicrogoal } =
-    useGoalsUpdater();
+  const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion } = useGoalsUpdater();
   const progress = calculateProgress([microGoal]);
 
   return (
@@ -19,11 +18,7 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
         <Typography variant="subtitle1" sx={{ flexGrow: 1, ml: 1 }}>
           {microGoal.name}
         </Typography>
-        <DeleteItem
-          deleteFunction={deleteMicrogoal}
-          goalIndex={macroGoalIndex}
-          microGoalIndex={microGoalIndex}
-        />
+        <DeleteItem goalIndex={macroGoalIndex} microGoalIndex={microGoalIndex} />
         <IconButton
           onClick={() => toggleMicroGoalExpansion(macroGoalIndex, microGoalIndex)}
           size="small"

@@ -1,13 +1,15 @@
 import ConfirmationDialog from '@components/common/ConfirmationDialog';
+import useGoalsUpdater from '@hooks/useGoalsUpdater';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Tooltip } from '@mui/material';
 import { useState } from 'react';
 
-const DeleteItem = ({ deleteFunction, goalIndex, microGoalIndex, taskIndex }) => {
+const DeleteItem = ({ goalIndex, microGoalIndex, taskIndex }) => {
+  const { deleteItem } = useGoalsUpdater();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDelete = async () => {
-    await deleteFunction({ goalIndex, microGoalIndex, taskIndex });
+    await deleteItem({ goalIndex, microGoalIndex, taskIndex });
     setIsDialogOpen(false); // Close the dialog after deletion
   };
 
