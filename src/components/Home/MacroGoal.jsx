@@ -1,4 +1,5 @@
 import AddItem from '@components/Home/AddItem';
+import DeleteItem from '@components/Home/DeleteItem';
 import MicroGoal from '@components/Home/MicroGoal';
 import ProgressIndicator from '@components/Home/ProgressIndicator';
 import useGoalsUpdater from '@hooks/useGoalsUpdater';
@@ -17,6 +18,7 @@ const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
         <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
           {macroGoal.name}
         </Typography>
+        <DeleteItem goalIndex={macroGoalIndex} />
         <IconButton onClick={() => toggleGoalExpansion(macroGoalIndex)} size="small">
           {macroGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>

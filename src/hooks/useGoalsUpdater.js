@@ -64,7 +64,7 @@ const useGoalsUpdater = () => {
   };
 
   // Delete a goal, microgoal, or task
-  const deleteItem = async ({ goalIndex, microGoalIndex, taskIndex }) => {
+  const deleteItem = async ({ goalIndex, microGoalIndex = undefined, taskIndex = undefined }) => {
     const updatedGoals = [...user.goals];
 
     if (taskIndex !== undefined) {
@@ -92,12 +92,8 @@ const useGoalsUpdater = () => {
     addTask: (goalIndex, microGoalIndex, taskName) =>
       addItem(goalIndex, microGoalIndex, { name: taskName, completed: false }, 'task'),
 
-    // Delete a goal, microgoal, or task
-    deleteGoal: (goalIndex) => deleteItem(goalIndex),
-    deleteMicrogoal: (goalIndex, microGoalIndex) => deleteItem(goalIndex, microGoalIndex),
-    deleteTask: (goalIndex, microGoalIndex, taskIndex) =>
-      deleteItem(goalIndex, microGoalIndex, taskIndex),
-
+    // Delete
+    deleteItem,
     toggleTaskCompletion,
 
     toggleGoalExpansion: (goalIndex) => toggleExpansion(goalIndex),

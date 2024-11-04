@@ -1,13 +1,13 @@
+import ConfirmationDialog from '@components/common/ConfirmationDialog';
 import { useUser } from '@contexts/UserContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import FireIcon from '@mui/icons-material/Whatshot';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import ConfirmSignOutDialog from './ConfirmSignOutDialog';
 
 const Header = () => {
-  const { user, handleSignIn } = useUser();
+  const { user, handleSignIn, handleSignOut } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,9 +65,17 @@ const Header = () => {
               </IconButton>
 
               {/* Dialog for Confirm Sign Out */}
-              <ConfirmSignOutDialog
+              <ConfirmationDialog
                 open={openConfirmDialog}
                 onClose={() => setOpenConfirmDialog(false)}
+                onConfirm={async () => {
+                  navigate('/');
+                  await handleSignOut();
+                  onClose();
+                }}
+                title="Confirm Sign Out"
+                description="Are you sure you want to sign out?"
+                confirmText="Sign Out"
               />
             </>
           ) : (
