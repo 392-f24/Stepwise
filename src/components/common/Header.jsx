@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const { user, handleSignIn, handleSignOut } = useUser();
+  const { user, handleSignIn, handleSignOut, streakCount } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,8 +17,6 @@ const Header = () => {
   // Show back button only on pages other than Home and Streak
   const showBackButton = location.pathname !== '/' && location.pathname !== '/streak';
 
-  //  Hard Coded streak count
-  const streakCount = 7;
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'primary.light', color: '#000' }}>
       <Toolbar sx={{ justifyContent: 'space-between', position: 'relative' }}>
