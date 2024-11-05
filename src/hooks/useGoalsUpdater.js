@@ -59,7 +59,12 @@ const useGoalsUpdater = () => {
       console.error('Specified goal, microgoal, or task does not exist');
       return;
     }
+    // Toggle the task completion status
     task.completed = !task.completed;
+
+    // Set the completion date when the task is completed, clear if uncompleted
+    task.completionDate = task.completed ? new Date().toISOString().split('T')[0] : null;
+    // Update the user profile with updated goals
     await updateGoals(updatedGoals, 'Task completion status toggled successfully.');
   };
 

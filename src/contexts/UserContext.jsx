@@ -1,9 +1,9 @@
 import LoadingCircle from '@components/common/LoadingCircle';
-import { calculateProgress } from '@utils/calculateProgress';
 import { signInWithGoogle } from '@utils/firebase/authUtils';
 import { fetchUserProfile, updateUserProfile } from '@utils/firebase/createUserProfile';
 import { getStreakData, updateStreakData } from '@utils/firebase/streakUtils';
 import { auth } from '@utils/firebaseConfig';
+import { getCompletedDates } from '@utils/taskCompletion';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 
@@ -18,8 +18,6 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [completedDays, setCompletedDays] = useState([]);
   const [streakCount, setStreakCount] = useState(0);
-
-  const today = new Date().toISOString().split('T')[0];
 
   // handle Sign-In
   const handleSignIn = async () => {
@@ -64,7 +62,7 @@ export const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Fetch streak data
+  // Fetch streak data and initialize completedDays and streakCount
   const fetchStreakData = async (userId) => {
     const { completedDays, streakCount } = await getStreakData(userId);
     setCompletedDays(completedDays || []);
@@ -73,11 +71,14 @@ export const UserProvider = ({ children }) => {
 
   // Calculate streak based on consecutive days
   const calculateStreak = (days) => {
-    const sortedDates = days.sort((a, b) => new Date(b) - new Date(a));
-    let streak = 0;
-    for (let i = 0; i < sortedDates.length; i++) {
-      const dayDiff = (new Date(today) - new Date(sortedDates[i])) / (1000 * 60 * 60 * 24);
-      if (dayDiff === streak) {
+    if (!days.length) return 0;
+
+    const sortedDates = days.map((date) => new Date(date)).sort((a, b) => b - a);
+
+    let streak = 1;
+    for (let i = 1; i < sortedDates.length; i++) {
+      const diff = (sortedDates[i - 1] - sortedDates[i]) / (1000 * 60 * 60 * 24);
+      if (diff === 1) {
         streak++;
       } else {
         break;
@@ -88,10 +89,10 @@ export const UserProvider = ({ children }) => {
 
   // Check for progress on goals and tasks today
   const checkDailyProgress = async (goals) => {
-    const { completedDates } = calculateProgress(goals);
-    const progressMadeToday = completedDates.includes(today);
+    const today = new Date().toISOString().split('T')[0];
+    const completedDates = getCompletedDates(goals);
 
-    if (progressMadeToday && !completedDays.includes(today)) {
+    if (completedDates.includes(today) && !completedDays.includes(today)) {
       const updatedDays = [...completedDays, today];
       const newStreakCount = calculateStreak(updatedDays);
 
@@ -111,6 +112,13 @@ export const UserProvider = ({ children }) => {
       setUser((prevUser) => ({ ...prevUser, ...updates }));
     }
   };
+
+  // Call `checkDailyProgress` once `user.goals` is loaded
+  useEffect(() => {
+    if (user && user.goals) {
+      checkDailyProgress(user.goals); // Call with `user.goals` once available
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider
