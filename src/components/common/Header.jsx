@@ -17,8 +17,9 @@ const Header = () => {
   // Show back button only on pages other than Home and Streak
   const showBackButton = location.pathname !== '/' && location.pathname !== '/streak';
 
-  //  Hard Coded streak count
-  const streakCount = 7;
+  //  Streak count (There may not have a user logged in)
+  const streakCount = user?.streak?.count || 0;
+
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'primary.light', color: '#000' }}>
       <Toolbar sx={{ justifyContent: 'space-between', position: 'relative' }}>

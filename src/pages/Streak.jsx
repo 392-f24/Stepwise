@@ -1,92 +1,63 @@
+import { useUser } from '@contexts/UserContext';
 import FireIcon from '@mui/icons-material/Whatshot';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import '@styles/StreakPage.css';
-
-// Days of the week headers
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+import { getChicagoDate } from '@utils/streakUtils';
+import { useMemo } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Streak = () => {
-  //  Hard coded streak days
-  const streakCount = 7;
-  const completedDays = [18, 19, 22, 23, 24, 25, 26, 27, 28];
+  const { user } = useUser();
 
-  //month start and end dates
-  const monthStart = new Date(2024, 9, 1);
-  const monthEnd = new Date(2024, 9 + 1, 0);
+  const streakCount = user.streak?.count || 0;
+  const completedDays = user.streak?.completedDays || {};
+  const today = getChicagoDate();
 
-  // Array to hold each day in October 2024 with the correct weekday alignment
-  const daysInCalendar = [];
-  const totalDays = monthEnd.getDate();
-  const startDay = monthStart.getDay();
+  // Cache the completed dates
+  const completedDatesSet = useMemo(
+    () => new Set(Object.keys(completedDays).filter((date) => completedDays[date] > 0)),
+    [completedDays],
+  );
 
-  // Adding empty cells for days before the month starts
-  for (let i = 0; i < startDay; i++) {
-    daysInCalendar.push(null);
-  }
-  for (let day = 1; day <= totalDays; day++) {
-    daysInCalendar.push({
-      day,
-      completed: completedDays.includes(day),
-    });
-  }
+  // Function to get the tile icon for a date
+  const getTileIcon = (date) => {
+    const formattedDate = date.toISOString().split('T')[0];
+    const isCompleted = completedDatesSet.has(formattedDate);
+    const isPastOrToday = formattedDate <= today;
+
+    if (isPastOrToday) {
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FireIcon
+            sx={{
+              fontSize: 16,
+              color: isCompleted ? 'primary.main' : 'gray',
+              animation: isCompleted ? 'burn-animation 2s infinite' : 'none',
+            }}
+          />
+        </Box>
+      );
+    }
+    return null;
+  };
+
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
       <FireIcon
         sx={{
           fontSize: 80,
           color: 'primary.dark',
-          animation: 'burn-animation 1s infinite',
+          animation: 'burn-animation 1.5s infinite',
         }}
       />
       <Typography variant="h4" sx={{ fontWeight: 'bold', mt: 2, mb: 3 }}>
         {streakCount} Day Streak
       </Typography>
 
-      <Typography variant="body2" sx={{ mb: 1, fontSize: '1rem' }}>
-        October 2024
-      </Typography>
-
-      {/* Days of the Week Headers */}
-      <Grid container spacing={1} sx={{ margin: 'auto' }}>
-        {daysOfWeek.map((day) => (
-          <Grid item xs={12 / 7} key={day}>
-            <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-              {day}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Calendar Grid */}
-      <Grid container spacing={1} sx={{ margin: 'auto' }}>
-        {daysInCalendar.map((dayObj, index) => (
-          <Grid item xs={12 / 7} key={index}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                height: '50px', // Height of each calendar cell
-              }}
-            >
-              {dayObj ? (
-                <>
-                  <Typography variant="caption">{dayObj.day}</Typography>
-                  <FireIcon
-                    sx={{
-                      color: dayObj.completed ? 'primary.main' : 'gray',
-                      fontSize: 28,
-                      animation: dayObj.completed ? 'burn-animation 3s infinite' : 'none',
-                    }}
-                  />
-                </>
-              ) : (
-                <Typography variant="caption">&nbsp;</Typography> // Empty space for non-month dates
-              )}
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+        <Calendar tileContent={({ date, view }) => (view === 'month' ? getTileIcon(date) : null)} />
+      </Box>
     </Box>
   );
 };
