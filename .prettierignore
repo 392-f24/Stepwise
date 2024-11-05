@@ -1,9 +1,7 @@
 node_modules/
 .yarn/
 build/
-.vscode/
 dist/
 package-lock.json
 yarn.lock
-package.json
 LICENSE
