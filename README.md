@@ -109,10 +109,11 @@ The `updateProfile` function accepts an object with updated user fields and sync
 
 The `useGoalsUpdater` custom hook provides functions to manage user goals, microgoals, and tasks by:
 
-1. updating the user's profile goals by adding/deleting items (goal, microgoal, task),
-2. deleting items (goal, microgoal, task),
-3. toggling completion status for tasks, and
-4. expanding or collapsing goals and microgoals.
+1. updating the user's profile, including both goals and (optionally) the streak,
+2. adding items (goal, microgoal, task),
+3. deleting items (goal, microgoal, task),
+4. toggling completion status for tasks with streak updates, and
+5. expanding or collapsing goals and microgoals.
 
 This hook enables efficient management of goal-related actions across components, reducing repetitive code and ensuring consistent updates.
 
@@ -124,7 +125,7 @@ This hook enables efficient management of goal-related actions across components
 
 #### Adding items
 
-- **addGoal**: Adds a new goal with an optional name.
+- **addGoal**: Adds a new goal with a specified name.
 
 ```jsx
 addGoal("New Goal Name");
@@ -164,7 +165,7 @@ deleteTask(goalIndex, microGoalIndex, taskIndex);
 
 #### Toggle Task Completion
 
-- **toggleTaskCompletion**: Toggles the completion status of a task.
+- **toggleTaskCompletion**: Toggles the completion status of a task and updates the streak accordingly.
 
 ```jsx
 toggleTaskCompletion(goalIndex, microGoalIndex, taskIndex);
