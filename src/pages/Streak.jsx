@@ -1,34 +1,43 @@
-import { useUser } from '@contexts/UserContext';
-import FireIcon from '@mui/icons-material/Whatshot';
-import { Box, Typography } from '@mui/material';
-import '@styles/StreakPage.css';
-import { getChicagoDate } from '@utils/streakUtils';
-import { useMemo } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { useUser } from '@/contexts/UserContext'
+import '@/styles/StreakPage.css'
+import { getChicagoDate } from '@/utils/streakUtils'
+import FireIcon from '@mui/icons-material/Whatshot'
+import { Box, Typography } from '@mui/material'
+import { useMemo } from 'react'
+import Calendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
 
 const Streak = () => {
-  const { user } = useUser();
+  const { user } = useUser()
 
-  const streakCount = user.streak?.count || 0;
-  const completedDays = user.streak?.completedDays || {};
-  const today = getChicagoDate();
+  const streakCount = user.streak?.count || 0
+  const completedDays = user.streak?.completedDays || {}
+  const today = getChicagoDate()
 
   // Cache the completed dates
   const completedDatesSet = useMemo(
-    () => new Set(Object.keys(completedDays).filter((date) => completedDays[date] > 0)),
-    [completedDays],
-  );
+    () =>
+      new Set(
+        Object.keys(completedDays).filter((date) => completedDays[date] > 0)
+      ),
+    [completedDays]
+  )
 
   // Function to get the tile icon for a date
   const getTileIcon = (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    const isCompleted = completedDatesSet.has(formattedDate);
-    const isPastOrToday = formattedDate <= today;
+    const formattedDate = date.toISOString().split('T')[0]
+    const isCompleted = completedDatesSet.has(formattedDate)
+    const isPastOrToday = formattedDate <= today
 
     if (isPastOrToday) {
       return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <FireIcon
             sx={{
               fontSize: 16,
@@ -37,10 +46,10 @@ const Streak = () => {
             }}
           />
         </Box>
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
@@ -51,15 +60,19 @@ const Streak = () => {
           animation: 'burn-animation 1.5s infinite',
         }}
       />
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mt: 2, mb: 3 }}>
+      <Typography variant='h4' sx={{ fontWeight: 'bold', mt: 2, mb: 3 }}>
         {streakCount} Day Streak
       </Typography>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-        <Calendar tileContent={({ date, view }) => (view === 'month' ? getTileIcon(date) : null)} />
+        <Calendar
+          tileContent={({ date, view }) =>
+            view === 'month' ? getTileIcon(date) : null
+          }
+        />
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default Streak;
+export default Streak

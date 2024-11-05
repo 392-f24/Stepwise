@@ -1,26 +1,26 @@
-import FlagIcon from '@mui/icons-material/Flag';
-import HomeIcon from '@mui/icons-material/Home';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import FlagIcon from '@mui/icons-material/Flag'
+import HomeIcon from '@mui/icons-material/Home'
+import { BottomNavigation, BottomNavigationAction } from '@mui/material'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Footer() {
-  const location = useLocation();
+  const location = useLocation()
 
   // Get the index of the page based on the path
   const getPageIndex = (path) => {
     switch (path) {
       case '/':
-        return 0;
+        return 0
       case '/streak':
-        return 1;
+        return 1
       default:
-        return 0;
+        return 0
     }
-  };
+  }
 
   return (
     <BottomNavigation
-      className="bottom-nav"
+      className='bottom-nav'
       value={getPageIndex(location.pathname)}
       showLabels
       sx={{
@@ -32,8 +32,18 @@ export default function Footer() {
         zIndex: 1000, // Ensure the footer is always on top
       }}
     >
-      <BottomNavigationAction label="Home" icon={<HomeIcon />} component={Link} to="/" />
-      <BottomNavigationAction label="Streak" icon={<FlagIcon />} component={Link} to="/streak" />
+      <BottomNavigationAction
+        label='Home'
+        icon={<HomeIcon />}
+        component={Link}
+        to='/'
+      />
+      <BottomNavigationAction
+        label='Streak'
+        icon={<FlagIcon />}
+        component={Link}
+        to='/streak'
+      />
     </BottomNavigation>
-  );
+  )
 }

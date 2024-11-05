@@ -1,7 +1,13 @@
-import DeleteItem from '@components/Home/DeleteItem';
-import { Checkbox, ListItem, ListItemText } from '@mui/material';
+import DeleteItem from '@/components/Home/DeleteItem'
+import { Checkbox, ListItem, ListItemText } from '@mui/material'
 
-const Task = ({ task, onToggle, macroGoalIndex, microGoalIndex, taskIndex }) => {
+const Task = ({
+  task,
+  onToggle,
+  macroGoalIndex,
+  microGoalIndex,
+  taskIndex,
+}) => {
   return (
     <ListItem
       dense
@@ -16,10 +22,10 @@ const Task = ({ task, onToggle, macroGoalIndex, microGoalIndex, taskIndex }) => 
       }}
     >
       <Checkbox
-        edge="start"
+        edge='start'
         checked={task.completed}
         onChange={onToggle}
-        size="medium"
+        size='medium'
         sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} // Enlarge the checkbox icon
       />
       <ListItemText
@@ -37,7 +43,7 @@ const Task = ({ task, onToggle, macroGoalIndex, microGoalIndex, taskIndex }) => 
         taskIndex={taskIndex}
       />
     </ListItem>
-  );
-};
+  )
+}
 
-export default Task;
+export default Task

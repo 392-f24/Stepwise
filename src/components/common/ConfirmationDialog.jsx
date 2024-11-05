@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from '@mui/material';
+} from '@mui/material'
 
 const ConfirmationDialog = ({
   open,
@@ -21,13 +21,17 @@ const ConfirmationDialog = ({
     <Dialog
       open={open}
       onClose={onClose}
-      aria-describedby={description ? 'confirmation-dialog-description' : undefined}
-      role="alertdialog"
+      aria-describedby={
+        description ? 'confirmation-dialog-description' : undefined
+      }
+      role='alertdialog'
     >
-      <DialogTitle id="confirmation-dialog-title">{title}</DialogTitle>
+      <DialogTitle id='confirmation-dialog-title'>{title}</DialogTitle>
       <DialogContent>
         {description && (
-          <DialogContentText id="confirmation-dialog-description">{description}</DialogContentText>
+          <DialogContentText id='confirmation-dialog-description'>
+            {description}
+          </DialogContentText>
         )}
       </DialogContent>
       <DialogActions>
@@ -37,7 +41,7 @@ const ConfirmationDialog = ({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}
 
-export default ConfirmationDialog;
+export default ConfirmationDialog

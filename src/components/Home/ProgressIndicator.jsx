@@ -1,9 +1,9 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material'
 
 const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
   <Box sx={{ position: 'relative', display: 'inline-flex', mr: 2 }}>
     <CircularProgress
-      variant="determinate"
+      variant='determinate'
       value={value}
       size={size}
       thickness={thickness}
@@ -28,8 +28,8 @@ const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
       }}
     >
       <Typography
-        variant="caption"
-        component="div"
+        variant='caption'
+        component='div'
         color={value >= 100 ? 'success.main' : 'text.secondary'}
         sx={{
           fontWeight: value >= 100 ? 'bold' : 'normal',
@@ -40,6 +40,6 @@ const ProgressIndicator = ({ value, size = 40, thickness = 4 }) => (
       </Typography>
     </Box>
   </Box>
-);
+)
 
-export default ProgressIndicator;
+export default ProgressIndicator

@@ -1,12 +1,12 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 import {
   CACHE_SIZE_UNLIMITED,
   initializeFirestore,
   persistentLocalCache,
   persistentSingleTabManager,
-} from 'firebase/firestore';
+} from 'firebase/firestore'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,10 +20,10 @@ const firebaseConfig = {
   messagingSenderId: '382174984076',
   appId: '1:382174984076:web:3c3fd6aab5e08ac6d948a9',
   measurementId: 'G-NYLX4742YP',
-};
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig)
 
 // Enable IndexedDB persistence with single-tab manager
 export const db = initializeFirestore(app, {
@@ -31,6 +31,6 @@ export const db = initializeFirestore(app, {
     tabManager: persistentSingleTabManager(),
     cacheSizeBytes: CACHE_SIZE_UNLIMITED,
   }),
-});
+})
 
-export const auth = getAuth(app);
+export const auth = getAuth(app)
