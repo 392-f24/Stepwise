@@ -69,9 +69,9 @@ const Header = () => {
                 open={openConfirmDialog}
                 onClose={() => setOpenConfirmDialog(false)}
                 onConfirm={async () => {
-                  navigate('/');
+                  setOpenConfirmDialog(false);
                   await handleSignOut();
-                  onClose();
+                  navigate('/');
                 }}
                 title="Confirm Sign Out"
                 description="Are you sure you want to sign out?"
