@@ -29,40 +29,61 @@ jobs:
       - name: 🔨 Build the app
         run: npm run build
 
+      # 🚨 Run Lint check
+      - name: 🚨 Run Lint
+        run: npm run lint:fix | tee lint-results.txt
+
+      # 🎨 Run Prettier format check
+      - name: 🎨 Run Prettier
+        run: npm run format | tee prettier-results.txt
+
       - name: 🧪 Test the app with Vitest
         run: npm run test:ci | tee test-results.txt
+      # 🚮 Clean up all results for comment
+      - name: 🚮 Clean up results
+        run: |
+          sed -i 's/\x1b\[[0-9;]*m//g' prettier-results.txt
+          sed -i 's/\x1b\[[0-9;]*m//g' lint-results.txt
+          sed -i 's/\x1b\[[0-9;]*m//g' test-results.txt
 
-      # 🚮 Clean up test results for comment
-      - name: 🚮 Clean up test results
-        run: sed -i 's/\x1b\[[0-9;]*m//g' test-results.txt # Removes ANSI color codes
-
-      # 📄 Format test results for better readability
-      - name: 📄 Format test results
+      # 📄 Format all results for better readability
+      - name: 📄 Format all results
         run: |
           {
             echo "### 🧪 Test Results"
             echo ""
             if grep -q "failed" test-results.txt; then
-              # Extract failed test details if any
               echo "❌ **Some tests failed**:"
               echo '```'
               grep -E "Test Files|Tests|Duration|failed" test-results.txt
               echo '```'
-              echo ""
               echo "💥 Please review the failed tests above."
             else
-              # Format output for passing tests
-              grep -E "(Test Files|Tests|Duration)" test-results.txt | while read -r line; do
-                if [[ $line == *"Test Files"* ]]; then
-                  echo "🗂 **Test Summary**: $line"
-                elif [[ $line == *"Tests"* ]]; then
-                  echo "✅ **Tests Passed**: $line"
-                elif [[ $line == *"Duration"* ]]; then
-                  echo "⏱️ **Total Duration**: $line"
-                fi
-              done
-              echo ""
-              echo "🎉 All tests passed successfully!"
+              echo "✅ **Tests Passed**: All tests passed successfully!"
+            fi
+            echo ""
+            echo "---"
+            echo  ""
+            echo "### 🎨 Prettier Format Check"
+            echo ""
+            if grep -q "(changed)" prettier-results.txt; then
+              echo "⚠️ **Prettier Issues Found** - Some format issues are fixed automatically by Prettier:"
+              echo '```'
+              grep -E "\s+\(changed\)" prettier-results.txt || true
+              echo '```'
+            else
+              echo "✅ **Prettier**: No formatting issues found!"
+            fi
+            echo ""
+            echo "### 🎨 Lint Check"
+            echo ""
+            if grep -qE "^[^0]* problems" lint-results.txt; then
+              echo "⚠️ **Lint Issues Found** - PLEASE FIX THEM!"
+              echo '```'
+              cat lint-results.txt
+              echo '```'
+            else
+              echo "✅ **Lint**: No linting issues found!"
             fi
           } > formatted-results.txt
 
