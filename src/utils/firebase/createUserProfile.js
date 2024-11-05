@@ -35,10 +35,7 @@ export const createFirstUserProfile = async (user) => {
     profilePic: photoURL || '',
     name: displayName || '',
     goals: [],
-    streakData: {
-      completedDays: [], // Array to store dates when tasks were completed
-      streakCount: 0, // Initial streak count
-    },
+    streak: [],
   };
 
   try {

@@ -1,40 +1,61 @@
 import { useUser } from '@contexts/UserContext';
+import { updateStreakDays } from '@utils/streakUtils';
 
 const useGoalsUpdater = () => {
   const { user, updateProfile } = useUser();
 
-  // Update the goals in the user profile
-  const updateGoals = async (updatedGoals, message) => {
+  // Function to update both goals and optionally streak in the user profile
+  const updateGoalsAndStreak = async (updatedGoals, countChange = 0, message) => {
     try {
-      await updateProfile({ goals: updatedGoals });
+      // If countChange is not 0, update the streak days
+      let updatedStreak = user.streak;
+      if (countChange !== 0) {
+        updatedStreak = updateStreakDays(user, countChange);
+      }
+
+      // Combine the updated goals and streak
+      const updatedProfile = {
+        goals: updatedGoals,
+        ...(countChange !== 0 && { streak: updatedStreak }),
+      }; // Only update streak if countChange is not 0
+
+      // Update the user profile
+      await updateProfile(updatedProfile);
       console.log(message);
     } catch (error) {
-      console.error(`Error updating goals: ${message}`, error);
+      console.error(`Error updating goals and streak: ${message}`, error);
     }
   };
 
   // Add a new goal, microgoal, or task
-  const addItem = async (goalIndex, microGoalIndex, newItem, itemType) => {
+  const addItem = async (newItem, itemType, goalIndex = undefined, microGoalIndex = undefined) => {
     const updatedGoals = [...user.goals];
-    let target = updatedGoals[goalIndex];
-    if (microGoalIndex !== undefined) {
-      target = target?.microgoals[microGoalIndex];
+
+    switch (itemType) {
+      case 'goal':
+        updatedGoals.push(newItem);
+        break;
+      case 'microgoal':
+        if (goalIndex === undefined) {
+          console.error('Goal index is required for adding a microgoal');
+          return;
+        }
+        updatedGoals[goalIndex]?.microgoals.push(newItem);
+        break;
+      case 'task':
+        if (goalIndex === undefined || microGoalIndex === undefined) {
+          console.error('Both goal and microgoal indices are required for adding a task');
+          return;
+        }
+        updatedGoals[goalIndex]?.microgoals[microGoalIndex]?.tasks.push(newItem);
+        break;
+      default:
+        console.error(`Unsupported item type: ${itemType}`);
+        return;
     }
 
-    if (!target && itemType !== 'goal') {
-      console.error(`${itemType} does not exist`);
-      return;
-    }
-
-    if (itemType === 'task') {
-      target.tasks.push(newItem);
-    } else if (itemType === 'microgoal') {
-      target.microgoals.push(newItem);
-    } else if (itemType === 'goal') {
-      updatedGoals.push(newItem);
-    }
-
-    await updateGoals(
+    // Update profile with goals and success message
+    await updateGoalsAndStreak(
       updatedGoals,
       `${itemType.charAt(0).toUpperCase() + itemType.slice(1)} added successfully.`,
     );
@@ -48,7 +69,7 @@ const useGoalsUpdater = () => {
         ? updatedGoals[goalIndex].microgoals[microGoalIndex]
         : updatedGoals[goalIndex];
     target.expanded = !target.expanded;
-    await updateGoals(updatedGoals, 'Expansion toggled successfully.');
+    await updateGoalsAndStreak(updatedGoals, 'Expansion toggled successfully.');
   };
 
   // Toggle the completion status of a task
@@ -62,10 +83,11 @@ const useGoalsUpdater = () => {
     // Toggle the task completion status
     task.completed = !task.completed;
 
-    // Set the completion date when the task is completed, clear if uncompleted
-    task.completionDate = task.completed ? new Date().toISOString().split('T')[0] : null;
-    // Update the user profile with updated goals
-    await updateGoals(updatedGoals, 'Task completion status toggled successfully.');
+    await updateGoalsAndStreak(
+      updatedGoals,
+      task.completed ? 1 : -1,
+      'Task completion status toggled successfully.',
+    );
   };
 
   // Delete a goal, microgoal, or task
@@ -80,22 +102,16 @@ const useGoalsUpdater = () => {
       updatedGoals.splice(goalIndex, 1);
     }
 
-    await updateGoals(updatedGoals, 'Item deleted successfully.');
+    await updateGoalsAndStreak(updatedGoals, 'Item deleted successfully.');
   };
 
   return {
-    // Add a new goal, microgoal, or task
-    addGoal: (goalName) =>
-      addItem(undefined, undefined, { name: goalName, expanded: false, microgoals: [] }, 'goal'),
+    // Add new goal, microgoal, or task
+    addGoal: (goalName) => addItem({ name: goalName, expanded: false, microgoals: [] }, 'goal'),
     addMicrogoal: (goalIndex, microGoalName) =>
-      addItem(
-        goalIndex,
-        undefined,
-        { name: microGoalName, expanded: false, tasks: [] },
-        'microgoal',
-      ),
+      addItem({ name: microGoalName, expanded: false, tasks: [] }, 'microgoal', goalIndex),
     addTask: (goalIndex, microGoalIndex, taskName) =>
-      addItem(goalIndex, microGoalIndex, { name: taskName, completed: false }, 'task'),
+      addItem({ name: taskName, completed: false }, 'task', goalIndex, microGoalIndex),
 
     // Delete
     deleteItem,

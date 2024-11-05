@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const { user, handleSignIn, handleSignOut, streakCount } = useUser();
+  const { user, handleSignIn, handleSignOut } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,6 +16,9 @@ const Header = () => {
 
   // Show back button only on pages other than Home and Streak
   const showBackButton = location.pathname !== '/' && location.pathname !== '/streak';
+
+  //  Streak count (There may not have a user logged in)
+  const streakCount = user?.streak?.count || 0;
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'primary.light', color: '#000' }}>
