@@ -29,7 +29,7 @@ const Streak = () => {
     const isCompleted = completedDatesSet.has(formattedDate)
     const isPastOrToday = formattedDate <= today
 
-    if (isPastOrToday) {
+    if (isPastOrToday && isCompleted) {
       return (
         <Box
           sx={{
@@ -41,8 +41,8 @@ const Streak = () => {
           <FireIcon
             sx={{
               fontSize: 16,
-              color: isCompleted ? 'primary.main' : 'gray',
-              animation: isCompleted ? 'burn-animation 2s infinite' : 'none',
+              color: 'primary.main',
+              animation: 'burn-animation 2s infinite',
             }}
           />
         </Box>
