@@ -1,5 +1,6 @@
 import CategoryPicker from '@/components/Home/CategoryPicker'
-import { Box, TextField } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
 import { DateTimePicker } from '../common/DateTimePickers'
 
@@ -62,6 +63,17 @@ const AddItem = ({ label, onAdd }) => {
       slotProps={{
         input: {
           startAdornment,
+          endAdornment: (
+            <InputAdornment position='end'>
+              <IconButton
+                color='primary'
+                onClick={handleAdd}
+                disabled={!inputValue.trim()}
+              >
+                <AddIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
         },
       }}
     />
