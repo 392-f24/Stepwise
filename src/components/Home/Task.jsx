@@ -1,5 +1,8 @@
 import DeleteItem from '@/components/Home/DeleteItem'
-import { Checkbox, ListItem, ListItemText } from '@mui/material'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import { Box, Checkbox, Chip, ListItem, ListItemText } from '@mui/material'
+import dayjs from 'dayjs'
+import calendar from 'dayjs/plugin/calendar'
 
 const Task = ({
   task,
@@ -8,6 +11,8 @@ const Task = ({
   microGoalIndex,
   taskIndex,
 }) => {
+  dayjs.extend(calendar)
+
   return (
     <ListItem
       dense
@@ -29,7 +34,19 @@ const Task = ({
         sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} // Enlarge the checkbox icon
       />
       <ListItemText
-        primary={task.name}
+        primary={
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {task.name}
+            {task.due != undefined ? (
+              <Chip
+                icon={<AccessTimeIcon />}
+                label={`Due: ${dayjs(task.due.toMillis()).calendar()}`}
+              />
+            ) : (
+              <></>
+            )}
+          </Box>
+        }
         primaryTypographyProps={{
           sx: {
             textDecoration: task.completed ? 'line-through' : 'none',

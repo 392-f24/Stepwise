@@ -1,22 +1,24 @@
-// @ts-check
-
 import CategoryPicker from '@/components/Home/CategoryPicker'
-import AddIcon from '@mui/icons-material/Add'
-import { IconButton, InputAdornment, TextField } from '@mui/material'
+import { Box, TextField } from '@mui/material'
 import { useState } from 'react'
+import { DateTimePicker } from '../common/DateTimePickers'
 
 const AddItem = ({ label, onAdd }) => {
   const [inputValue, setInputValue] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('#000000')
+  const [dueDate, setDueDate] = useState(null)
 
   const handleAdd = async () => {
     if (inputValue.trim()) {
-      await onAdd(
-        inputValue.trim(),
-        label === 'New Goal' ? selectedCategory : null
-      )
+      let attributes = {
+        category: label === 'New Goal' ? selectedCategory : null,
+        dueDate: dueDate,
+      }
+
+      await onAdd(inputValue.trim(), attributes)
       setInputValue('')
       setSelectedCategory('#000000')
+      setDueDate(null)
     }
   }
 
@@ -27,6 +29,36 @@ const AddItem = ({ label, onAdd }) => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
+    ) : label === 'New Task' ? (
+      <Box
+        sx={{
+          display: 'flex',
+          backgroundColor: '#eeeeee',
+          borderRadius: '0.25rem',
+          marginRight: '0.5rem',
+        }}
+      >
+        <DateTimePicker
+          value={dueDate}
+          onChange={(newValue) => setDueDate(newValue)}
+        />
+      </Box>
+    ) : null
+
+  const endAdornment =
+    label === 'New Task' ? (
+      <Box
+        sx={{
+          display: 'flex',
+          backgroundColor: '#eeeeee',
+          borderRadius: '0.25rem',
+        }}
+      >
+        <DateTimePicker
+          value={dueDate}
+          onChange={(newValue) => setDueDate(newValue)}
+        />
+      </Box>
     ) : null
 
   return (
@@ -46,17 +78,6 @@ const AddItem = ({ label, onAdd }) => {
       slotProps={{
         input: {
           startAdornment,
-          endAdornment: (
-            <InputAdornment position='end'>
-              <IconButton
-                color='primary'
-                onClick={handleAdd}
-                disabled={!inputValue.trim()}
-              >
-                <AddIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
         },
       }}
     />
