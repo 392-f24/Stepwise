@@ -45,22 +45,6 @@ const AddItem = ({ label, onAdd }) => {
       </Box>
     ) : null
 
-  const endAdornment =
-    label === 'New Task' ? (
-      <Box
-        sx={{
-          display: 'flex',
-          backgroundColor: '#eeeeee',
-          borderRadius: '0.25rem',
-        }}
-      >
-        <DateTimePicker
-          value={dueDate}
-          onChange={(newValue) => setDueDate(newValue)}
-        />
-      </Box>
-    ) : null
-
   return (
     <TextField
       sx={{
