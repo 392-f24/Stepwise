@@ -8,36 +8,24 @@ const Home = () => {
   const { user } = useUser()
   const { addGoal } = useGoalsUpdater()
 
-  const handleAddGoal = async (goal) => {
-    if (goal.text && goal.category) {
-      await addGoal(goal.text, goal.category) // Pass goal name and category name to addGoal
-    } else {
-      console.error('Goal name or category is missing')
-    }
-  }
-
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: 2 }}>
-      <AddItem label='New Goal' onAdd={handleAddGoal} />
+      <AddItem label='New Goal' onAdd={addGoal} />
 
       {/* Render existing goals */}
       <Box sx={{ mt: 2 }}>
-        {user.goals.map((goal, index) => {
-          const borderColor = goal.category ? goal.category : '#000'
-
-          return (
-            <Box
-              key={index}
-              sx={{
-                borderLeft: `5px solid ${borderColor}`,
-                paddingLeft: 2,
-                mb: 2,
-              }}
-            >
-              <MacroGoal key={index} macroGoal={goal} macroGoalIndex={index} />
-            </Box>
-          )
-        })}
+        {user.goals.map((goal, index) => (
+          <Box
+            key={index}
+            sx={{
+              borderLeft: `5px solid ${goal.category || '#000'}`,
+              paddingLeft: 2,
+              mb: 2,
+            }}
+          >
+            <MacroGoal macroGoal={goal} macroGoalIndex={index} />
+          </Box>
+        ))}
       </Box>
     </Box>
   )
