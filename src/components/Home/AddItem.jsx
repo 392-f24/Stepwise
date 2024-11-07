@@ -1,33 +1,47 @@
 // @ts-check
 
 import CategoryPicker from '@/components/Home/CategoryPicker'
+import { DateTimePicker } from '@/components/Home/DateTimePickers'
 import AddIcon from '@mui/icons-material/Add'
 import { IconButton, InputAdornment, TextField } from '@mui/material'
 import { useState } from 'react'
 
 const AddItem = ({ label, onAdd }) => {
   const [inputValue, setInputValue] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('#000000')
+  const [selectedCategory, setSelectedCategory] = useState('#000000') // For 'New Goal'
+  const [dueDate, setDueDate] = useState(null) // For 'New Task'
 
   const handleAdd = async () => {
     if (inputValue.trim()) {
-      await onAdd(
-        inputValue.trim(),
-        label === 'New Goal' ? selectedCategory : null
-      )
+      let attributes = null
+
+      if (label === 'New Goal') {
+        attributes = selectedCategory
+      } else if (label === 'New Task') {
+        attributes = dueDate
+      }
+
+      await onAdd(inputValue.trim(), attributes ?? null)
       setInputValue('')
       setSelectedCategory('#000000')
+      setDueDate(null)
     }
   }
 
   // Conditionally render the category picker
-  const startAdornment =
-    label === 'New Goal' ? (
-      <CategoryPicker
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
-    ) : null
+  const getStartAdornment = () => {
+    if (label === 'New Goal') {
+      return (
+        <CategoryPicker
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      )
+    } else if (label === 'New Task') {
+      return <DateTimePicker value={dueDate} onChange={setDueDate} />
+    }
+    return null
+  }
 
   return (
     <TextField
@@ -45,7 +59,7 @@ const AddItem = ({ label, onAdd }) => {
       fullWidth
       slotProps={{
         input: {
-          startAdornment,
+          startAdornment: getStartAdornment(),
           endAdornment: (
             <InputAdornment position='end'>
               <IconButton
