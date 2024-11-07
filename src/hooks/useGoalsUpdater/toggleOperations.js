@@ -23,13 +23,10 @@ export const toggleTaskCompletion = async (
 export const toggleExpansion = async (
   userContext,
   goalIndex,
-  microGoalIndex = undefined
+  microGoalIndex
 ) => {
   const updatedGoals = [...userContext.user.goals]
-  const target =
-    microGoalIndex !== undefined
-      ? updatedGoals[goalIndex].microgoals[microGoalIndex]
-      : updatedGoals[goalIndex]
+  const target = updatedGoals[goalIndex].microgoals[microGoalIndex]
   target.expanded = !target.expanded
   await updateGoalsAndStreak(
     userContext,
