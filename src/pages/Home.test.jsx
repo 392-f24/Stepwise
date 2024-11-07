@@ -1,7 +1,7 @@
 import { UserProvider } from '@/contexts/UserContext'
 import Home from '@/pages/Home'
 import { act, render, screen } from '@testing-library/react'
-import { describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock `@contexts/UserContext` to control user profile and updates
 vi.mock('@/contexts/UserContext', async () => {

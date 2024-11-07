@@ -1,3 +1,5 @@
+// @ts-check
+
 import LoadingCircle from '@/components/common/LoadingCircle'
 import { signInWithGoogle } from '@/utils/firebase/authUtils'
 import {
@@ -8,17 +10,87 @@ import { auth } from '@/utils/firebaseConfig'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 
+/**
+ * @typedef {Object} Task
+ * @property {string} name - Name of the task.
+ * @property {boolean} completed - Whether the task is completed.
+ */
+
+/**
+ * @typedef {Object<string, Task>} TaskMap - A map of task IDs to Task objects.
+ */
+
+/**
+ * @typedef {Object} MicroGoal
+ * @property {string} name - Name of the microgoal.
+ * @property {boolean} expanded - Whether the microgoal is expanded.
+ * @property {TaskMap} tasks - Map of task IDs to tasks within the microgoal.
+ */
+
+/**
+ * @typedef {Object<string, MicroGoal>} MicroGoalMap - A map of microgoal IDs to MicroGoal objects.
+ */
+
+/**
+ * @typedef {Object} Goal
+ * @property {string} name - Name of the goal.
+ * @property {boolean} expanded - Whether the goal is expanded.
+ * @property {string} category - HEX color code for the goal category.
+ * @property {MicroGoalMap} microgoals - Map of microgoal IDs to microgoals within the goal.
+ */
+
+/**
+ * @typedef {Object<string, Goal>} GoalMap - A map of goal IDs to Goal objects.
+ */
+
+/**
+ * @typedef {Object} Streak
+ * @property {Object.<string, number>} completedDays - Map of dates (as strings) to their completion counts.
+ * @property {number} count - Current streak count.
+ */
+
+/**
+ * @typedef {Object} User
+ * @property {string} uid - User's UID.
+ * @property {string} profilePic - URL of the user's profile picture.
+ * @property {string} name - User's display name.
+ * @property {GoalMap} goals - Map of goal IDs to user's goals.
+ * @property {Streak} streak - User's streak data.
+ */
+
+/**
+ * @typedef {Object} UserContextType
+ * @property {User | null} user - Current user profile or null if not logged in.
+ * @property {boolean} loading - Whether the user data is still loading.
+ * @property {() => Promise<boolean>} handleSignIn - Function to handle user sign-in.
+ * @property {() => Promise<void>} handleSignOut - Function to handle user sign-out.
+ * @property {(updates: Partial<User>) => Promise<void>} updateProfile - Function to update user profile.
+ */
+
 // Create UserContext
-const UserContext = createContext()
+/** @type {import('react').Context<UserContextType>} */
+const UserContext = createContext({
+  user: null,
+  loading: false,
+  handleSignIn: async () => false,
+  handleSignOut: async () => {},
+  updateProfile: async (updates) => {},
+})
 
 // Custom hook to use UserContext
+/** @returns {UserContextType} */
 export const useUser = () => useContext(UserContext)
 
+/**
+ * @param {{ children: React.ReactNode }} props - The component's props.
+ * @returns {JSX.Element} - The UserProvider component.
+ */
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(/** @type {User | null} */ (null))
   const [loading, setLoading] = useState(true)
 
   // handle Sign-In
+  /** @returns {Promise<boolean>} */
   const handleSignIn = async () => {
     const userData = await signInWithGoogle()
     if (userData) {
@@ -29,6 +101,7 @@ export const UserProvider = ({ children }) => {
   }
 
   // Handle Sign-Out
+  /** @returns {Promise<void>} */
   const handleSignOut = async () => {
     try {
       await signOut(auth)
@@ -43,7 +116,6 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Fetch user profile if user is logged in
         const profile = await fetchUserProfile(firebaseUser.uid)
         if (profile) {
           setUser({ ...firebaseUser, ...profile })
@@ -61,6 +133,10 @@ export const UserProvider = ({ children }) => {
   }, [])
 
   // Function to update user profile
+  /**
+   * @param {Partial<User>} updates - The updates to apply to the user profile.
+   * @returns {Promise<void>}
+   */
   const updateProfile = async (updates) => {
     if (user) {
       await updateUserProfile(user.uid, updates)

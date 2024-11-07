@@ -86,7 +86,7 @@ const Header = () => {
                 color='inherit'
                 onClick={() => setOpenConfirmDialog(true)}
               >
-                <Avatar alt={user.displayName} src={user.photoURL} />
+                <Avatar alt={user.name} src={user.profilePic} />
               </IconButton>
 
               {/* Dialog for Confirm Sign Out */}

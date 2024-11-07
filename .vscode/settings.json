@@ -1,8 +1,11 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
+    "source.organizeImports": "always",
+    "source.fixAll.eslint": "always",
+    "source.addMissingImports.ts": "always"
   },
   "search.exclude": {
     "**/.yarn": true,
