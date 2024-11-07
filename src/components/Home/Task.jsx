@@ -40,6 +40,7 @@ const Task = ({
             {task.due != undefined ? (
               <Chip
                 icon={<AccessTimeIcon />}
+                size='small'
                 label={`Due: ${dayjs(task.due.toMillis()).calendar()}`}
               />
             ) : (
