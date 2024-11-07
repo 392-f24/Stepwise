@@ -1,3 +1,5 @@
+// @ts-check
+
 import { createTheme } from '@mui/material/styles'
 
 export const theme = createTheme({
@@ -6,7 +8,7 @@ export const theme = createTheme({
       light: '#E4E0EE',
       main: '#4E2A84',
       dark: '#361d5c',
-      contractText: '#fff',
+      contrastText: '#fff',
     },
     secondary: {
       main: '#f44336',

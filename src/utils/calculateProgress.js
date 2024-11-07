@@ -1,3 +1,10 @@
+// @ts-check
+
+/**
+ * Calculates the progress of the goal tracker.
+ * @param {Array<object>} items - The items to calculate progress for.
+ * @returns {number} - The progress percentage.
+ */
 export const calculateProgress = (items) => {
   // Calculate the progress of the goal tracker
   const completed = items.reduce(

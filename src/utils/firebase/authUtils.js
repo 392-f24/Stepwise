@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
   createFirstUserProfile,
   fetchUserProfile,
@@ -7,7 +9,10 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 
 const provider = new GoogleAuthProvider()
 
-// Google Sign-In function
+/**
+ * Signs in the user using Google OAuth
+ * @returns {Promise<object | null>} - The user profile data or null if sign-in fails.
+ */
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider)

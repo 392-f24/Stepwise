@@ -1,10 +1,12 @@
+// @ts-check
+
 import { db } from '@/utils/firebaseConfig'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
 /**
  * Fetches the user profile data from Firestore by UID.
  * @param {string} uid - User's UID.
- * @returns {object|null} - The user profile data or null if not found.
+ * @returns {Promise<object|null>} - The user profile data or null if not found.
  */
 export const fetchUserProfile = async (uid) => {
   try {
@@ -26,7 +28,7 @@ export const fetchUserProfile = async (uid) => {
 /**
  * Creates a user profile in Firestore with default data if it doesn't exist.
  * @param {object} user - The authenticated user object.
- * @returns {boolean} - Returns true if the profile is created or exists, false otherwise.
+ * @returns {Promise<boolean>} - Returns true if the profile is created, false otherwise.
  */
 export const createFirstUserProfile = async (user) => {
   const { uid, photoURL, displayName } = user
@@ -60,7 +62,7 @@ export const createFirstUserProfile = async (user) => {
 /**
  * Retrieves the user profile from Firestore by UID.
  * @param {string} uid - User's UID.
- * @returns {object|null} - The user profile data or null if not found.
+ * @returns {Promise<object|null>} - The user profile data or null if not found.
  */
 export const getUserProfile = async (uid) => {
   return await fetchUserProfile(uid)
@@ -70,7 +72,7 @@ export const getUserProfile = async (uid) => {
  * Updates the user profile data in Firestore by UID.
  * @param {string} uid - User's UID.
  * @param {object} updates - The fields to update in the user profile.
- * @returns {boolean} - Returns true if the update is successful, false otherwise.
+ * @returns {Promise<boolean>} - Returns true if the profile is updated, false otherwise.
  */
 export const updateUserProfile = async (uid, updates) => {
   try {

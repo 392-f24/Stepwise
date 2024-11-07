@@ -4,7 +4,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { IconButton, Tooltip } from '@mui/material'
 import { useState } from 'react'
 
-const DeleteItem = ({ goalIndex, microGoalIndex, taskIndex }) => {
+const DeleteItem = ({
+  goalIndex,
+  microGoalIndex = undefined,
+  taskIndex = undefined,
+}) => {
   const { deleteItem } = useGoalsUpdater()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
