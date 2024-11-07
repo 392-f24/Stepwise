@@ -11,10 +11,22 @@ const Home = () => {
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: 2 }}>
       <AddItem label='New Goal' onAdd={addGoal} />
-      <Box sx={{ height: 16 }} />
-      {user.goals.map((macroGoal, index) => (
-        <MacroGoal key={index} macroGoal={macroGoal} macroGoalIndex={index} />
-      ))}
+
+      {/* Render existing goals */}
+      <Box sx={{ mt: 2 }}>
+        {user.goals.map((goal, index) => (
+          <Box
+            key={index}
+            sx={{
+              borderLeft: `5px solid ${goal.category || '#000'}`,
+              paddingLeft: 2,
+              mb: 2,
+            }}
+          >
+            <MacroGoal macroGoal={goal} macroGoalIndex={index} />
+          </Box>
+        ))}
+      </Box>
     </Box>
   )
 }
