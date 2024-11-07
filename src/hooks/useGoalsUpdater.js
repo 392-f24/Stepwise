@@ -149,13 +149,6 @@ const useGoalsUpdater = () => {
         microGoalIndex
       ),
 
-    // Delete a goal, microgoal, or task
-    deleteGoal: (goalIndex) => deleteItem(goalIndex),
-    deleteMicrogoal: (goalIndex, microGoalIndex) =>
-      deleteItem(goalIndex, microGoalIndex),
-    deleteTask: (goalIndex, microGoalIndex, taskIndex) =>
-      deleteItem(goalIndex, microGoalIndex, taskIndex),
-
     // Delete
     deleteItem,
     toggleTaskCompletion,
