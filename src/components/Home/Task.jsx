@@ -3,6 +3,7 @@
 import DeleteItem from '@/components/Home/DeleteItem'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { Box, Checkbox, Chip, ListItem, ListItemText } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 
@@ -15,20 +16,32 @@ const Task = ({
   microGoalIndex,
   taskIndex,
 }) => {
-  const renderDueDateChip = () => (
-    <Chip
-      icon={<AccessTimeIcon />}
-      size='small'
-      label={`Due: ${dayjs(task.due.toMillis()).calendar()}`}
-    />
-  )
+  const renderDueDateChip = () => {
+    const theme = useTheme()
+    const isOverdue =
+      dayjs().isAfter(dayjs(task.due.toMillis())) && !task.completed
+
+    return (
+      <Chip
+        icon={<AccessTimeIcon color='inherit' />}
+        size='small'
+        label={`${isOverdue ? 'Past' : 'Due'}: ${dayjs(task.due.toMillis()).calendar()}`}
+        sx={{
+          ...(isOverdue && {
+            bgcolor: theme.palette.error.main,
+            color: theme.palette.error.contrastText,
+          }),
+        }}
+      />
+    )
+  }
 
   return (
     <ListItem
       dense
       sx={{
         ...styles.listItem,
-        bgcolor: task.completed ? 'action.hover' : styles.listItem.bgcolor,
+        bgcolor: task.completed ? 'action.hover' : 'inherit',
       }}
     >
       <Checkbox
@@ -59,11 +72,7 @@ const Task = ({
 
 const styles = {
   listItem: {
-    display: 'flex',
-    alignItems: 'center',
     padding: 1,
-    bgcolor: 'background.paper',
-    borderRadius: 1,
     mb: 1,
     '&:hover': { bgcolor: 'action.hover' },
   },
@@ -72,6 +81,7 @@ const styles = {
     color: 'text.disabled',
   },
   textContainer: {
+    marginLeft: 1,
     display: 'flex',
     flexDirection: { xs: 'column', sm: 'row' },
     alignItems: { xs: 'baseline', sm: 'center' },
