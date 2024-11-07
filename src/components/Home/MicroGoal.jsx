@@ -59,13 +59,8 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
         </List>
         <AddItem
           label='New Task'
-          onAdd={(taskName, attributes) =>
-            addTask(
-              macroGoalIndex,
-              microGoalIndex,
-              taskName,
-              attributes.dueDate
-            )
+          onAdd={(taskName, dueDate) =>
+            addTask(macroGoalIndex, microGoalIndex, taskName, dueDate)
           }
         />
       </Collapse>

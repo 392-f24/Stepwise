@@ -10,10 +10,7 @@ const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 800, margin: 'auto', padding: 2 }}>
-      <AddItem
-        label='New Goal'
-        onAdd={(goalName, attributes) => addGoal(goalName, attributes.category)}
-      />
+      <AddItem label='New Goal' onAdd={addGoal} />
 
       {/* Render existing goals */}
       <Box sx={{ mt: 2 }}>

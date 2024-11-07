@@ -1,8 +1,12 @@
+// @ts-check
+
 import DeleteItem from '@/components/Home/DeleteItem'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { Box, Checkbox, Chip, ListItem, ListItemText } from '@mui/material'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
+
+dayjs.extend(calendar)
 
 const Task = ({
   task,
@@ -11,19 +15,20 @@ const Task = ({
   microGoalIndex,
   taskIndex,
 }) => {
-  dayjs.extend(calendar)
+  const renderDueDateChip = () => (
+    <Chip
+      icon={<AccessTimeIcon />}
+      size='small'
+      label={`Due: ${dayjs(task.due.toMillis()).calendar()}`}
+    />
+  )
 
   return (
     <ListItem
       dense
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: 1,
-        bgcolor: task.completed ? 'action.hover' : 'background.paper',
-        borderRadius: 1,
-        mb: 1,
-        '&:hover': { bgcolor: 'action.hover' },
+        ...styles.listItem,
+        bgcolor: task.completed ? 'action.hover' : styles.listItem.bgcolor,
       }}
     >
       <Checkbox
@@ -31,35 +36,16 @@ const Task = ({
         checked={task.completed}
         onChange={onToggle}
         size='medium'
-        sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} // Enlarge the checkbox icon
       />
       <ListItemText
         primary={
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: ['column', 'row'],
-              alignItems: ['baseline', 'center'],
-              gap: '0.5rem',
-            }}
-          >
+          <Box sx={styles.textContainer}>
             {task.name}
-            {task.due != undefined ? (
-              <Chip
-                icon={<AccessTimeIcon />}
-                size='small'
-                label={`Due: ${dayjs(task.due.toMillis()).calendar()}`}
-              />
-            ) : (
-              <></>
-            )}
+            {task.due ? renderDueDateChip() : null}
           </Box>
         }
         primaryTypographyProps={{
-          sx: {
-            textDecoration: task.completed ? 'line-through' : 'none',
-            color: task.completed ? 'text.disabled' : 'text.primary',
-          },
+          sx: task.completed ? styles.primaryTextCompleted : {},
         }}
       />
       <DeleteItem
@@ -69,6 +55,28 @@ const Task = ({
       />
     </ListItem>
   )
+}
+
+const styles = {
+  listItem: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: 1,
+    bgcolor: 'background.paper',
+    borderRadius: 1,
+    mb: 1,
+    '&:hover': { bgcolor: 'action.hover' },
+  },
+  primaryTextCompleted: {
+    textDecoration: 'line-through',
+    color: 'text.disabled',
+  },
+  textContainer: {
+    display: 'flex',
+    flexDirection: { xs: 'column', sm: 'row' },
+    alignItems: { xs: 'baseline', sm: 'center' },
+    gap: '0.5rem',
+  },
 }
 
 export default Task
