@@ -35,7 +35,14 @@ const Task = ({
       />
       <ListItemText
         primary={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: ['column', 'row'],
+              alignItems: ['baseline', 'center'],
+              gap: '0.5rem',
+            }}
+          >
             {task.name}
             {task.due != undefined ? (
               <Chip
