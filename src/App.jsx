@@ -2,6 +2,7 @@ import Footer from '@/components/common/Footer'
 import Header from '@/components/common/Header'
 import LoadingCircle from '@/components/common/LoadingCircle'
 import { UserProvider, useUser } from '@/contexts/UserContext'
+import GoalDetails from '@/pages/GoalDetails'
 import Home from '@/pages/Home'
 import Streak from '@/pages/Streak'
 import { theme } from '@/utils/theme'
@@ -48,6 +49,10 @@ const App = () => {
                 <Route
                   path='/streak'
                   element={<ProtectedRoute element={<Streak />} />}
+                />
+                <Route
+                  path='/goals/:macroGoalIndex'
+                  element={<GoalDetails />}
                 />
               </Routes>
             </div>

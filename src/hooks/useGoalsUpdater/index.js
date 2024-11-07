@@ -70,6 +70,9 @@ const useGoalsUpdater = () => {
      */
     toggleMicroGoalExpansion: (goalIndex, microGoalIndex) =>
       toggleExpansion(userContext, goalIndex, microGoalIndex),
+
+    // Gets list of goals for current user
+    goals: user.goals,
   }
 }
 
