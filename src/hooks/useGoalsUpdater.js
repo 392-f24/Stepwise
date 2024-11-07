@@ -7,8 +7,8 @@ const useGoalsUpdater = () => {
   // Function to update both goals and optionally streak in the user profile
   const updateGoalsAndStreak = async (
     updatedGoals,
-    countChange = 0,
-    message
+    message,
+    countChange = 0
   ) => {
     try {
       // If countChange is not 0, update the streak days
@@ -97,8 +97,8 @@ const useGoalsUpdater = () => {
 
     await updateGoalsAndStreak(
       updatedGoals,
-      task.completed ? 1 : -1,
-      'Task completion status toggled successfully.'
+      'Task completion status toggled successfully.',
+      task.completed ? 1 : -1
     )
   }
 
@@ -125,9 +125,16 @@ const useGoalsUpdater = () => {
   }
 
   return {
-    // Add new goal, microgoal, or task
-    addGoal: (goalName) =>
-      addItem({ name: goalName, expanded: false, microgoals: [] }, 'goal'),
+    addGoal: (goalName, category) =>
+      addItem(
+        {
+          name: goalName,
+          category: category, // Store only category name
+          expanded: false,
+          microgoals: [],
+        },
+        'goal'
+      ),
     addMicrogoal: (goalIndex, microGoalName) =>
       addItem(
         { name: microGoalName, expanded: false, tasks: [] },
@@ -141,6 +148,13 @@ const useGoalsUpdater = () => {
         goalIndex,
         microGoalIndex
       ),
+
+    // Delete a goal, microgoal, or task
+    deleteGoal: (goalIndex) => deleteItem(goalIndex),
+    deleteMicrogoal: (goalIndex, microGoalIndex) =>
+      deleteItem(goalIndex, microGoalIndex),
+    deleteTask: (goalIndex, microGoalIndex, taskIndex) =>
+      deleteItem(goalIndex, microGoalIndex, taskIndex),
 
     // Delete
     deleteItem,
