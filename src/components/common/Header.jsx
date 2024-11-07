@@ -22,9 +22,8 @@ const Header = () => {
   // State for Dialog visibility
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
-  // Show back button only on pages other than Home and Streak
-  const showBackButton =
-    location.pathname !== '/' && location.pathname !== '/streak'
+  // Show back button only on pages other than Home
+  const showBackButton = location.pathname !== '/'
 
   //  Streak count (There may not have a user logged in)
   const streakCount = user?.streak?.count || 0
