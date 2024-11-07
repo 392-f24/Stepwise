@@ -47,7 +47,6 @@ describe('useGoalsUpdater', () => {
     expect(user.goals).toContainEqual({
       name: goalName,
       category,
-      expanded: false,
       microgoals: [],
     })
 
@@ -129,28 +128,6 @@ describe('useGoalsUpdater', () => {
     )
   })
 
-  it('should toggle goal expansion', async () => {
-    const goalIndex = 0
-
-    // Add initial goal to user data
-    user.goals.push({
-      name: 'Goal 1',
-      category: '#000000',
-      expanded: false,
-      microgoals: [],
-    })
-
-    await goalsUpdater.toggleGoalExpansion(goalIndex)
-
-    expect(user.goals[goalIndex].expanded).toBe(true)
-
-    expect(updateProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        goals: user.goals,
-      })
-    )
-  })
-
   it('should toggle microgoal expansion', async () => {
     const goalIndex = 0
     const microGoalIndex = 0
@@ -159,11 +136,10 @@ describe('useGoalsUpdater', () => {
     user.goals.push({
       name: 'Goal 1',
       category: '#000000',
-      expanded: false,
       microgoals: [{ name: 'MicroGoal 1', expanded: false, tasks: [] }],
     })
 
-    await goalsUpdater.toggleMicroGoalExpansion(goalIndex, microGoalIndex)
+    await goalsUpdater.toggleExpansion(goalIndex, microGoalIndex)
 
     expect(user.goals[goalIndex].microgoals[microGoalIndex].expanded).toBe(true)
 

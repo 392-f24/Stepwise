@@ -56,19 +56,12 @@ const useGoalsUpdater = () => {
       toggleTaskCompletion(userContext, goalIndex, microGoalIndex, taskIndex),
 
     /**
-     * Toggles the expansion status of a specified goal.
-     * @param {number} goalIndex - Index of the goal.
-     * @returns {Promise<void>}
-     */
-    toggleGoalExpansion: (goalIndex) => toggleExpansion(userContext, goalIndex),
-
-    /**
      * Toggles the expansion status of a specified microgoal.
      * @param {number} goalIndex - Index of the goal.
      * @param {number} microGoalIndex - Index of the microgoal.
      * @returns {Promise<void>}
      */
-    toggleMicroGoalExpansion: (goalIndex, microGoalIndex) =>
+    toggleExpansion: (goalIndex, microGoalIndex) =>
       toggleExpansion(userContext, goalIndex, microGoalIndex),
   }
 }

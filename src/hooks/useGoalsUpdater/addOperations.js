@@ -6,7 +6,7 @@ import { updateGoalsAndStreak } from './updateHelpers'
 export const addGoal = async (userContext, goalName, category) => {
   const updatedGoals = [
     ...userContext.user.goals,
-    { name: goalName, category, expanded: false, microgoals: [] },
+    { name: goalName, category, microgoals: [] },
   ]
   await updateGoalsAndStreak(
     userContext,

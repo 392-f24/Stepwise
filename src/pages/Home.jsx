@@ -9,7 +9,7 @@ const Home = () => {
   const { addGoal } = useGoalsUpdater()
 
   return (
-    <Box sx={{ maxWidth: 800, margin: 'auto', padding: 2 }}>
+    <Box sx={{ maxWidth: 800, margin: 'auto', padding: 3 }}>
       <AddItem label='New Goal' onAdd={addGoal} />
 
       {/* Render existing goals */}

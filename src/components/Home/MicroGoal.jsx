@@ -8,6 +8,7 @@ import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Box,
   Collapse,
+  Divider,
   IconButton,
   List,
   Paper,
@@ -15,13 +16,12 @@ import {
 } from '@mui/material'
 
 const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
-  const { addTask, toggleMicroGoalExpansion, toggleTaskCompletion } =
-    useGoalsUpdater()
+  const { addTask, toggleExpansion, toggleTaskCompletion } = useGoalsUpdater()
   const progress = calculateProgress([microGoal])
 
   return (
     <Paper
-      elevation={1}
+      elevation={5}
       sx={{ p: 1, mb: 2, bgcolor: 'background.default', borderRadius: 1 }}
     >
       <Box display='flex' alignItems='center'>
@@ -34,16 +34,15 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
           microGoalIndex={microGoalIndex}
         />
         <IconButton
-          onClick={() =>
-            toggleMicroGoalExpansion(macroGoalIndex, microGoalIndex)
-          }
+          onClick={() => toggleExpansion(macroGoalIndex, microGoalIndex)}
           size='small'
         >
           {microGoal.expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
       </Box>
       <Collapse in={microGoal.expanded} timeout='auto' unmountOnExit>
-        <List sx={{ pl: 2 }}>
+        <Divider sx={{ mt: 2 }} />
+        <List sx={{ pl: 2, pb: 3 }}>
           {microGoal.tasks.map((task, taskIndex) => (
             <Task
               key={taskIndex}
