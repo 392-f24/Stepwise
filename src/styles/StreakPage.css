@@ -1,3 +1,8 @@
+/* Ensure all calendar dates have the color black */
+.react-calendar__month-view__days__day--weekend {
+    color: black !important; /* Override weekend color */
+  }
+
 /* Custom weekday headers */
 .react-calendar__month-view__weekdays__weekday {
     text-transform: capitalize;
