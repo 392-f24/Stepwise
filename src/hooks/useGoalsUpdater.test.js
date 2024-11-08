@@ -105,9 +105,6 @@ describe('useGoalsUpdater', () => {
       ],
     })
 
-    // should be empty Array
-    expect(user.streak).toEqual([])
-
     await goalsUpdater.toggleTaskCompletion(
       goalIndex,
       microGoalIndex,
@@ -118,8 +115,8 @@ describe('useGoalsUpdater', () => {
       user.goals[goalIndex].microgoals[microGoalIndex].tasks[taskIndex]
     expect(task.completed).toBe(true)
 
-    // check streak is not empty
-    expect(user.streak).not.toEqual([])
+    // Check user.streak.completedDays length is 1
+    expect(Object.keys(user.streak.completedDays)).toHaveLength(1)
   })
 
   it('should delete a specified task', async () => {

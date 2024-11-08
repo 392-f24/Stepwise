@@ -28,12 +28,16 @@ export const getChicagoDate = () => {
  */
 export const updateStreakDays = (streak, countChange) => {
   const currentDate = getChicagoDate()
+  const completedDays = streak.completedDays || {}
 
   // Get the current count for the current date or initialize it to 0
-  const currentCount = streak.completedDays[currentDate] || 0
+  const currentCount = completedDays[currentDate] || 0
 
   // Update the count for the current date
-  streak.completedDays[currentDate] = Math.max(0, currentCount + countChange)
+  streak.completedDays = {
+    ...completedDays,
+    [currentDate]: Math.max(0, currentCount + countChange),
+  }
 
   return streak
 }
