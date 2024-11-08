@@ -50,7 +50,6 @@ const CategoryPicker = ({ selectedCategory, setSelectedCategory }) => (
       {colors.map((color, index) => (
         <MenuItem
           key={index}
-          className={'color-menu'}
           value={color}
           sx={{
             display: 'inline-flex',

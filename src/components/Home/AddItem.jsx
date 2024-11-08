@@ -3,19 +3,33 @@
 import CategoryPicker from '@/components/Home/CategoryPicker'
 import { DateTimePicker } from '@/components/Home/DateTimePickers'
 import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
 import { IconButton, InputAdornment, TextField } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const AddItem = ({ label, onAdd }) => {
-  const [inputValue, setInputValue] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('#000000') // For 'New Goal'
+const AddItem = ({
+  label,
+  onAdd,
+  presetValue = '',
+  presetCategory = '#000000',
+  sx = {},
+}) => {
+  const [inputValue, setInputValue] = useState(presetValue)
+  const [selectedCategory, setSelectedCategory] = useState(presetCategory) // For 'New Goal'
   const [dueDate, setDueDate] = useState(null) // For 'New Task'
+
+  useEffect(() => {
+    if (presetValue) {
+      setInputValue(presetValue)
+      setSelectedCategory(presetCategory)
+    }
+  }, [presetValue, presetCategory])
 
   const handleAdd = async () => {
     if (inputValue.trim()) {
       let attributes = null
 
-      if (label === 'New Goal') {
+      if (label === 'New Goal' || label === 'Edit Goal') {
         attributes = selectedCategory
       } else if (label === 'New Task') {
         attributes = dueDate
@@ -30,7 +44,7 @@ const AddItem = ({ label, onAdd }) => {
 
   // Conditionally render the category picker
   const getStartAdornment = () => {
-    if (label === 'New Goal') {
+    if (label === 'New Goal' || label === 'Edit Goal') {
       return (
         <CategoryPicker
           selectedCategory={selectedCategory}
@@ -49,6 +63,7 @@ const AddItem = ({ label, onAdd }) => {
         display: 'flex',
         alignItems: 'center',
         gap: 2,
+        ...sx,
       }}
       variant='outlined'
       label={label}
@@ -67,7 +82,7 @@ const AddItem = ({ label, onAdd }) => {
                 onClick={handleAdd}
                 disabled={!inputValue.trim()}
               >
-                <AddIcon />
+                {label === 'Edit Goal' ? <CheckIcon /> : <AddIcon />}
               </IconButton>
             </InputAdornment>
           ),

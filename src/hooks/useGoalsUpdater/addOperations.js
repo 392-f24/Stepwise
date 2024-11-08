@@ -50,20 +50,17 @@ export const addTask = async (
   )
 }
 
-export const updateGoalCategory = async (
-  userContext,
-  goalIndex,
-  newCategory,
-  goals
-) => {
-  goals[goalIndex] = {
-    ...goals[goalIndex],
-    category: newCategory,
+export const updateGoal = async (userContext, goalIndex, name, category) => {
+  const updatedGoals = [...userContext.user.goals]
+  updatedGoals[goalIndex] = {
+    ...updatedGoals[goalIndex],
+    name,
+    category,
   }
 
   await updateGoalsAndStreak(
     userContext,
-    goals,
+    updatedGoals,
     'Goal category updated successfully.'
   )
 }
