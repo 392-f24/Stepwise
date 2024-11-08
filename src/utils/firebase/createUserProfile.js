@@ -1,6 +1,7 @@
 // @ts-check
 
 import { db } from '@/utils/firebaseConfig'
+import { calculateStreakCount } from '@/utils/streakUtils'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
 /**
@@ -18,7 +19,16 @@ export const fetchUserProfile = async (uid) => {
       return null
     }
 
-    return userSnapshot.data()
+    const profile = userSnapshot.data()
+
+    const { count, todayCount } = calculateStreakCount(
+      profile.streak.completedDays
+    )
+
+    return {
+      ...profile,
+      streak: { ...profile.streak, count, todayCount },
+    }
   } catch (error) {
     console.error('Error fetching user profile:', error)
     return null
@@ -57,15 +67,6 @@ export const createFirstUserProfile = async (user) => {
     console.error('Error creating or checking user profile:', error)
     return false
   }
-}
-
-/**
- * Retrieves the user profile from Firestore by UID.
- * @param {string} uid - User's UID.
- * @returns {Promise<object|null>} - The user profile data or null if not found.
- */
-export const getUserProfile = async (uid) => {
-  return await fetchUserProfile(uid)
 }
 
 /**

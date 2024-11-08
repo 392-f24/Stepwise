@@ -44,8 +44,16 @@ import { createContext, useContext, useEffect, useState } from 'react'
  */
 
 /**
+ * @typedef {Object} CompletedDays
+ * @property {string} date - Date in YYYY-MM-DD format.
+ * @property {number} count - Number of completions for the date.
+ */
+
+/**
  * @typedef {Object} Streak
- * @property {Object.<string, number>} completedDays - Map of dates (as strings) to their completion counts.
+ * @property {CompletedDays} completedDays - Map of dates (as strings) to their completion counts.
+ * @property {number} count - Current streak count.
+ * @property {number} todayCount - Today's completion count.
  */
 
 /**
