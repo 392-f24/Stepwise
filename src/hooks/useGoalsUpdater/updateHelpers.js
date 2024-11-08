@@ -8,13 +8,12 @@ export const updateGoalsAndStreak = async (
   message = 'Update successful.',
   countChange = 0
 ) => {
-  const updatedStreak =
-    countChange !== 0
-      ? updateStreakDays(userContext.user, countChange)
-      : userContext.user.streak
+  // Only update streak if countChange is non-zero
   const updatedProfile = {
     goals: updatedGoals,
-    ...(countChange !== 0 && { streak: updatedStreak }),
+    ...(countChange !== 0 && {
+      streak: updateStreakDays(userContext.user.streak, countChange),
+    }),
   }
 
   try {

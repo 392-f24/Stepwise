@@ -1,3 +1,5 @@
+// @ts-check
+
 import { useUser } from '@/contexts/UserContext'
 import '@/styles/StreakPage.css'
 import { getChicagoDate } from '@/utils/streakUtils'
@@ -66,9 +68,11 @@ const Streak = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
         <Calendar
+          tileDisabled={() => true}
           tileContent={({ date, view }) =>
             view === 'month' ? getTileIcon(date) : null
           }
+          className='custom-calendar'
         />
       </Box>
     </Box>

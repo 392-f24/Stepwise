@@ -3,33 +3,40 @@ import Home from '@/pages/Home'
 import { act, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-// Mock `@contexts/UserContext` to control user profile and updates
-vi.mock('@/contexts/UserContext', async () => {
-  const actual = await vi.importActual('@/contexts/UserContext')
-  let mockUserProfile = {
-    uid: '123',
-    profilePic: '',
-    name: 'Test User',
-    goals: [],
-    streak: [],
-  }
+// Define mock data and functions directly
+let mockUserProfile = {
+  uid: '123',
+  profilePic: '',
+  name: 'Test User',
+  goals: [],
+  streak: { completedDays: {}, count: 0 },
+}
 
-  return {
-    ...actual,
-    useUser: () => ({
-      user: mockUserProfile,
-      loading: false,
-      updateProfile: vi.fn((updates) => {
-        mockUserProfile = { ...mockUserProfile, ...updates }
-      }),
-    }),
-  }
+const mockUpdateProfile = vi.fn((updates) => {
+  mockUserProfile = { ...mockUserProfile, ...updates }
 })
+
+// Mock `@contexts/UserContext` to control user profile and updates
+vi.mock('@/contexts/UserContext', () => ({
+  UserProvider: ({ children }) => <>{children}</>,
+  useUser: () => ({
+    user: mockUserProfile,
+    loading: false,
+    updateProfile: mockUpdateProfile,
+  }),
+}))
 
 describe('Home Screen - No Goals', () => {
   beforeEach(() => {
-    // Reset mockUserProfile for each test
     vi.clearAllMocks()
+    // Reset mockUserProfile to its initial state before each test
+    mockUserProfile = {
+      uid: '123',
+      profilePic: '',
+      name: 'Test User',
+      goals: [],
+      streak: { completedDays: {}, count: 0 },
+    }
   })
 
   test('Displays only "New Goal" field when there are no goals', async () => {
@@ -42,11 +49,10 @@ describe('Home Screen - No Goals', () => {
     })
 
     // Check if "New Goal" text field is present
-    const newGoalInput = screen.getByLabelText('New Goal')
-    expect(newGoalInput).not.to.be.null
+    expect(screen.getByLabelText('New Goal')).toBeTruthy()
 
     // Ensure "New Microgoal" and "New Task" fields are not present initially
-    expect(screen.queryByLabelText('New Microgoal')).to.be.null
-    expect(screen.queryByLabelText('New Task')).to.be.null
+    expect(screen.queryByLabelText('New Microgoal')).toBeNull()
+    expect(screen.queryByLabelText('New Task')).toBeNull()
   })
 })
