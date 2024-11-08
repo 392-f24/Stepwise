@@ -13,11 +13,11 @@ const TaskCompletionModal = ({ open, handleClose }) => {
 
   // Define the start and end times for each stage in seconds
   const timeRanges = [
-    { start: 0, end: 1.5 },
-    { start: 1.45, end: 3.2 },
-    { start: 2.95, end: 4.5 },
-    { start: 3.9, end: 5.5 },
-    { start: 5, end: 8.5 },
+    { start: 0, end: 2.5 },
+    { start: 2.5, end: 4 },
+    { start: 4, end: 6 },
+    { start: 6, end: 8 },
+    { start: 6.5, end: 11 },
   ]
 
   // Show confetti when exactly 5 tasks are completed
@@ -86,7 +86,7 @@ const TaskCompletionModal = ({ open, handleClose }) => {
 
         <Box
           component='video'
-          src='/tree.mov'
+          src='/treee.mov'
           alt='Growing Tree'
           ref={videoRef}
           controls={false}
