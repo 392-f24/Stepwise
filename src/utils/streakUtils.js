@@ -1,4 +1,5 @@
 // @ts-check
+import dayjs from 'dayjs'
 
 /**
  * Gets the current date in Chicago timezone (formatted as YYYY-MM-DD).
@@ -13,30 +14,20 @@ export const getChicagoDate = () => {
 }
 
 /**
- * Streak data type for a user.
- * @typedef {Object} Streak
- * @property {Object.<string, number>} completedDays - Map of date strings to their completion counts.
- * @property {number} count - Current streak count.
+ * Completed days map with date-count pairs.
+ * @typedef {Object} completedDays
+ * @property {string} date - Date in YYYY-MM-DD format.
+ * @property {number} count - Number of completions for the date.
  */
 
 /**
- * User data type.
- * @typedef {Object} User
- * @property {Streak} streak - User's streak data.
+ * Updates the completed days for a user based on the current date.
+ * @param {completedDays} completedDays - The completed days map.
+ * @param {number} countChange - 1 or -1 to increment or decrement the count for the current date.
+ * @returns {completedDays} - Updated completedDays as a map of date-count pairs.
  */
-
-/**
- * Updates the streak count and completed days for a user.
- * @param {User} user - The user object containing streak information.
- * @param {number} countChange - The change to apply to the completion count for the current date.
- * @returns {{completedDays: Object.<string, number>, count: number}} - Updated completedDays as a map of date-count pairs and the new streak count.
- */
-export const updateStreakDays = (user, countChange) => {
+export const updateStreakDays = (completedDays, countChange) => {
   const currentDate = getChicagoDate()
-
-  // { completedDays: { '2024-11-01': 1, '2024-11-02': 0 }, count: 1 }
-  const completedDays = user.streak?.completedDays || {}
-  const count = user.streak?.count || 0
 
   // Get the current count for the current date or initialize it to 0
   const currentCount = completedDays[currentDate] || 0
@@ -44,18 +35,34 @@ export const updateStreakDays = (user, countChange) => {
   // Update the count for the current date
   completedDays[currentDate] = Math.max(0, currentCount + countChange)
 
-  // Adjust the streak count based on changes to the current day's count
-  let newCount = count
-  if (currentCount === 0 && countChange > 0) {
-    // Increment streak if new positive count for the day
-    newCount++
-  } else if (currentCount > 0 && completedDays[currentDate] === 0) {
-    // Decrement streak if current day count goes to 0
-    newCount = Math.max(0, newCount - 1)
+  return completedDays
+}
+
+/**
+ * Calculates the current streak count based on completedDays.
+ * @param {completedDays} completedDays - The map of date strings to completion counts.
+ * @returns {{ today: string, streakCount: number }} - The current date and streak count.
+ */
+export const calculateStreakCount = (completedDays) => {
+  const today = getChicagoDate()
+  const yesterday = dayjs(today).subtract(1, 'day').format('YYYY-MM-DD')
+
+  // Sort dates in descending order, so we can check from yesterday backward
+  const dates = Object.keys(completedDays).sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  )
+
+  let streakCount = 0
+
+  for (const date of dates) {
+    if (date === today) continue // Skip today, only count until yesterday
+
+    if (completedDays[date] > 0 && date <= yesterday) {
+      streakCount++
+    } else {
+      break // Stop counting if a non-completed day is found
+    }
   }
 
-  return {
-    completedDays,
-    count: newCount,
-  }
+  return { today, streakCount }
 }

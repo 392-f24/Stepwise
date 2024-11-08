@@ -1,6 +1,6 @@
 import { useUser } from '@/contexts/UserContext'
 import '@/styles/StreakPage.css'
-import { getChicagoDate } from '@/utils/streakUtils'
+import { calculateStreakCount } from '@/utils/streakUtils'
 import FireIcon from '@mui/icons-material/Whatshot'
 import { Box, Typography } from '@mui/material'
 import { useMemo } from 'react'
@@ -9,10 +9,8 @@ import 'react-calendar/dist/Calendar.css'
 
 const Streak = () => {
   const { user } = useUser()
-
-  const streakCount = user.streak?.count || 0
   const completedDays = user.streak?.completedDays || {}
-  const today = getChicagoDate()
+  const { today, streakCount } = calculateStreakCount(completedDays)
 
   // Cache the completed dates
   const completedDatesSet = useMemo(

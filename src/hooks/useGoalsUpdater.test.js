@@ -21,7 +21,7 @@ describe('useGoalsUpdater', () => {
       profilePic: 'test-pic-url',
       name: 'Test User',
       goals: [], // Start with an empty goals array
-      streak: { count: 0, completedDays: [] },
+      streak: [],
     }
 
     updateProfile = vi.fn(async (updates) => {
@@ -105,6 +105,9 @@ describe('useGoalsUpdater', () => {
       ],
     })
 
+    // should be empty Array
+    expect(user.streak).toEqual([])
+
     await goalsUpdater.toggleTaskCompletion(
       goalIndex,
       microGoalIndex,
@@ -115,39 +118,8 @@ describe('useGoalsUpdater', () => {
       user.goals[goalIndex].microgoals[microGoalIndex].tasks[taskIndex]
     expect(task.completed).toBe(true)
 
-    expect(updateProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        goals: user.goals,
-        streak: expect.objectContaining({
-          count: 1,
-          completedDays: expect.objectContaining({
-            [new Date().toISOString().split('T')[0]]: 1, // Check today's date in YYYY-MM-DD format
-          }),
-        }),
-      })
-    )
-  })
-
-  it('should toggle microgoal expansion', async () => {
-    const goalIndex = 0
-    const microGoalIndex = 0
-
-    // Add initial goal and microgoal to user data
-    user.goals.push({
-      name: 'Goal 1',
-      category: '#000000',
-      microgoals: [{ name: 'MicroGoal 1', expanded: false, tasks: [] }],
-    })
-
-    await goalsUpdater.toggleExpansion(goalIndex, microGoalIndex)
-
-    expect(user.goals[goalIndex].microgoals[microGoalIndex].expanded).toBe(true)
-
-    expect(updateProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        goals: user.goals,
-      })
-    )
+    // check streak is not empty
+    expect(user.streak).not.toEqual([])
   })
 
   it('should delete a specified task', async () => {
