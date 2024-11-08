@@ -22,7 +22,7 @@ export const fetchUserProfile = async (uid) => {
     const profile = userSnapshot.data()
 
     const { count, todayCount } = calculateStreakCount(
-      profile.streak.completedDays
+      profile.streak.completedDays || {}
     )
 
     return {
