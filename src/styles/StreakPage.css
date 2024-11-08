@@ -1,31 +1,36 @@
-/* Ensure all calendar dates have the color black */
+/* Ensure all calendar dates have a consistent black color, including weekends */
 .react-calendar__month-view__days__day--weekend {
-    color: black !important; /* Override weekend color */
-  }
+  color: black !important; /* Override the weekend default color */
+}
 
-/* Custom weekday headers */
+/* Style weekday headers with bold, capitalized, and black text */
 .react-calendar__month-view__weekdays__weekday {
-    text-transform: capitalize;
-    font-weight: bold;
-    color: black;
-    font-size: 0.8rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  color: black;
+  font-size: 0.8rem;
 }
 
-/* Larger navigation arrows */
+/* Enlarge navigation arrows for better visibility */
 .react-calendar__navigation button {
-    font-size: 1rem;
-    color: black;
+  font-size: 1rem;
+  color: black;
 }
 
-/* Animation for FireIcon */
+/* Remove the default background color */
+button.react-calendar__tile.react-calendar__month-view__days__day {
+  color: inherit;
+  background-color: #fff;
+  pointer-events: none;
+}
+
+/* Animation for FireIcon, creating a pulsing "burn" effect */
 @keyframes burn-animation {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.2);
-    }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
 }
