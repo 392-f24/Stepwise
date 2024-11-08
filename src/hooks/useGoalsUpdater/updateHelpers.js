@@ -12,7 +12,7 @@ export const updateGoalsAndStreak = async (
   const updatedProfile = {
     goals: updatedGoals,
     ...(countChange !== 0 && {
-      streak: updateStreakDays(userContext.user, countChange),
+      streak: updateStreakDays(userContext.user.streak, countChange),
     }),
   }
 

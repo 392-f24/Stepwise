@@ -22,20 +22,20 @@ export const getChicagoDate = () => {
 
 /**
  * Updates the completed days for a user based on the current date.
- * @param {completedDays} completedDays - The completed days map.
+ * @param {import('@/contexts/UserContext').Streak} streak - The user's streak object.
  * @param {number} countChange - 1 or -1 to increment or decrement the count for the current date.
- * @returns {completedDays} - Updated completedDays as a map of date-count pairs.
+ * @returns {import('@/contexts/UserContext').Streak} The updated streak object.
  */
-export const updateStreakDays = (completedDays, countChange) => {
+export const updateStreakDays = (streak, countChange) => {
   const currentDate = getChicagoDate()
 
   // Get the current count for the current date or initialize it to 0
-  const currentCount = completedDays[currentDate] || 0
+  const currentCount = streak.completedDays[currentDate] || 0
 
   // Update the count for the current date
-  completedDays[currentDate] = Math.max(0, currentCount + countChange)
+  streak.completedDays[currentDate] = Math.max(0, currentCount + countChange)
 
-  return completedDays
+  return streak
 }
 
 /**
