@@ -2,6 +2,8 @@ import AddItem from '@/components/Home/AddItem'
 import DeleteItem from '@/components/Home/DeleteItem'
 import ProgressIndicator from '@/components/Home/ProgressIndicator'
 import Task from '@/components/Home/Task'
+import TaskCompletionModal from '@/components/Home/TaskCompletionModal'
+import { useUser } from '@/contexts/UserContext'
 import useGoalsUpdater from '@/hooks/useGoalsUpdater'
 import { calculateProgress } from '@/utils/calculateProgress'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
@@ -14,10 +16,21 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
+import { useState } from 'react'
 
 const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
   const { addTask, toggleExpansion, toggleTaskCompletion } = useGoalsUpdater()
   const progress = calculateProgress([microGoal])
+  const [modalOpen, setModalOpen] = useState(false)
+  const { user } = useUser()
+
+  // Access today's task completion count
+  const todayCount = user?.streak?.todayCount || 0
+
+  const handleTaskCompletion = (macroGoalIndex, microGoalIndex, taskIndex) => {
+    toggleTaskCompletion(macroGoalIndex, microGoalIndex, taskIndex)
+    setModalOpen(true) // Open the modal after each task completion
+  }
 
   return (
     <Paper
@@ -51,7 +64,7 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
               microGoalIndex={microGoalIndex}
               taskIndex={taskIndex}
               onToggle={() =>
-                toggleTaskCompletion(macroGoalIndex, microGoalIndex, taskIndex)
+                handleTaskCompletion(macroGoalIndex, microGoalIndex, taskIndex)
               }
             />
           ))}
@@ -63,6 +76,13 @@ const MicroGoal = ({ microGoal, macroGoalIndex, microGoalIndex }) => {
           }
         />
       </Collapse>
+
+      {/* TaskCompletionModal */}
+      <TaskCompletionModal
+        open={modalOpen}
+        handleClose={() => setModalOpen(false)}
+        count={todayCount} // Pass today's task completion count to the modal
+      />
     </Paper>
   )
 }
