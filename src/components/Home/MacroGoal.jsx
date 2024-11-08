@@ -12,6 +12,10 @@ const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
     navigate(`/goals/${macroGoalIndex}`)
   }
 
+  const handleDeleteClick = (event) => {
+    event.stopPropagation() // Prevents the onClick from triggering navigation
+  }
+
   return (
     <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
       <Box
@@ -24,7 +28,9 @@ const MacroGoal = ({ macroGoal, macroGoalIndex }) => {
         <Typography variant='h6' sx={{ flexGrow: 1, ml: 2 }}>
           {macroGoal.name}
         </Typography>
-        <DeleteItem goalIndex={macroGoalIndex} />
+        <div onClick={handleDeleteClick} sx={{ display: 'inline-flex' }}>
+          <DeleteItem goalIndex={macroGoalIndex} />
+        </div>
       </Box>
     </Paper>
   )
