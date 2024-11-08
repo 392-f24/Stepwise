@@ -1,7 +1,12 @@
 // @ts-check
 
 import { useUser } from '@/contexts/UserContext'
-import { addGoal, addMicrogoal, addTask } from './addOperations'
+import {
+  addGoal,
+  addMicrogoal,
+  addTask,
+  updateGoalCategory,
+} from './addOperations'
 import { deleteItem } from './deleteOperations'
 import { toggleExpansion, toggleTaskCompletion } from './toggleOperations'
 
@@ -37,6 +42,15 @@ const useGoalsUpdater = () => {
      */
     addTask: (goalIndex, microGoalIndex, taskName, dueDate) =>
       addTask(userContext, goalIndex, microGoalIndex, taskName, dueDate),
+
+    /**
+     * Updates the category color for a specified goal.
+     * @param {number} goalIndex - Index of the goal.
+     * @param {string} newCategory - New HEX color code for the goal category.
+     * @returns {Promise<void>}
+     */
+    updateGoalCategory: (goalIndex, newCategory) =>
+      updateGoalCategory(userContext, goalIndex, newCategory, user.goals),
 
     /**
      * Deletes a specified goal, microgoal, or task.
